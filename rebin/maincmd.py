@@ -28,9 +28,4 @@ def main(args=None):
     mythen.process_and_save(data, args.angle, args.delta, args.sum, nfiles, args.output)
 
 if __name__ == '__main__':
-    import sys
-    if len(sys.argv) > 1:
-        main(sys.argv[1:])
-    else:
-        main()
-#         _main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])
+    main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])

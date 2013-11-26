@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
-import scisoftpy as np
-import numpy as np2
-
+import numpy as np
+from dlsio import pyio # @UnresolvedImport
 
 def find_mythen_files(scan, visit=None, year=None, bl_dir='/dls/i11/data', ending=('mac-[0-9]*.dat', 'mythen-[0-9]*.dat')):
-    return np.io.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending) #@UndefinedVariable
+    return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
 def rebin(mashed, angle, delta, summed, files):
     '''
@@ -80,7 +77,7 @@ def rebin(mashed, angle, delta, summed, files):
             mul  = np.where(nnweight == 0, 0, wmax/nnweight)
             nresult[1:3] *= mul
             nresult[2] = np.sqrt(nresult[2])
-            np2.savetxt(files[i], nresult.T, fmt=['%f', '%f', '%f', '%d']) #@UndefinedVariable
+            np.savetxt(files[i], nresult.T, fmt=['%f', '%f', '%f', '%d'])
             
     # correct for lower weights
     wmax = nweight.max()
@@ -93,12 +90,12 @@ def load_all(files, visit, year):
     found = []
     for f in files:
         try:
-            d = np.io.load(f, format='srs') #@UndefinedVariable
+            d = pyio.load(f)
             data.append(d)
             found.append(f)
         except:
             nfiles = find_mythen_files(int(f), visit=visit, year=year)
-            dl = [np.io.load(f, format='srs') for f in nfiles] #@UndefinedVariable
+            dl = [pyio.load(f) for f in nfiles]
             data.extend(dl)
             found.extend(nfiles)
     return data, found
@@ -125,7 +122,7 @@ def process_and_save(data, angle, delta, summed, files, output):
     result = rebin(mashed, angle, delta, summed, nfiles)
     if summed:
         result[2] = np.sqrt(result[2])
-        np2.savetxt(output, result.T, fmt=['%f', '%f', '%f', '%d']) #@UndefinedVariable
+        np.savetxt(output, result.T, fmt=['%f', '%f', '%f', '%d'])
 
 def parse_range_list(lst):
     '''Parse a string like 0,2-7,20,35-9
@@ -143,4 +140,3 @@ def parse_range_list(lst):
             b += (a // f) * f
         values.extend(range(a,b+1))
     return values
-
