@@ -1,7 +1,6 @@
-#!/usr/bin/env python
- 
-import sys
-
+'''
+GUI for rebinner
+'''
 from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog
 from PySide.QtCore import Qt
 
@@ -90,10 +89,8 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         if k == Qt.Key_Delete or k == Qt.Key_Backspace:
             self.deleteFiles()
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
+def main(args):
+    app = QApplication(args)
     frame = MainWindow()
     frame.show()
     app.exec_()
-
