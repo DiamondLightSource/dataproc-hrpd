@@ -305,7 +305,7 @@ p, li { white-space: pre-wrap; }
     <widget class="QPushButton" name="process">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>120</x>
        <y>30</y>
        <width>91</width>
        <height>81</height>

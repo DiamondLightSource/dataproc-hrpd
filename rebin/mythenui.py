@@ -84,7 +84,7 @@ class Ui_mythen_gui(object):
         self.both_rb.setChecked(True)
         self.both_rb.setObjectName("both_rb")
         self.process = QtGui.QPushButton(self.output_group)
-        self.process.setGeometry(QtCore.QRect(130, 30, 91, 81))
+        self.process.setGeometry(QtCore.QRect(120, 30, 91, 81))
         self.process.setObjectName("process")
         mythen_gui.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(mythen_gui)
