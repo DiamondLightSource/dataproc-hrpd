@@ -89,7 +89,10 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         if k == Qt.Key_Delete or k == Qt.Key_Backspace:
             self.deleteFiles()
 
-def main(args):
+def main(args=None):
+    if args is None:
+        import sys
+        args = sys.argv
     app = QApplication(args)
     frame = MainWindow()
     frame.show()
