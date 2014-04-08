@@ -1,7 +1,7 @@
 '''
 GUI for rebinner
 '''
-from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog
+from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QErrorMessage
 from PySide.QtCore import Qt
 
 from mythenui import Ui_mythen_gui
@@ -89,7 +89,11 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                     else:
                         not_found.append(n)
                 if not_found:
-                    print("The following numbers were not found:", not_found)
+                    error = QErrorMessage(self)
+                    msg = "The following numbers were not found: "
+                    for n in not_found:
+                        msg = msg + str(n) + ", "
+                    error.showMessage(msg[:-2])
 
     def processScans(self):
         base = self.getBaseDirectory(True)
