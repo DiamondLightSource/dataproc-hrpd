@@ -389,8 +389,6 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
                 if len(files) > 0:
                     break
 
-    if len(files) == 0:
-        raise IOError, 'Scan files not found'
     return files
 
 def load(name, warn=True):
