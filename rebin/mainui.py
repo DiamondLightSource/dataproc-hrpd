@@ -1,7 +1,7 @@
 '''
 GUI for rebinner
 '''
-from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QErrorMessage
+from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
 from PySide.QtCore import Qt
 
 from mythenui import Ui_mythen_gui
@@ -80,7 +80,15 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                 not_found = []
                 numbers = mythen.parse_range_list(text)
                 year, visit = self.getYearAndVisit()
+                progress = QProgressDialog("Locating scan files from numbers...", "Stop", 0, len(numbers), self)
+                progress.setWindowModality(Qt.WindowModal)
+                progress.forceShow()
+                progress.setValue(0)
                 for n in numbers:
+                    progress.setValue(progress.value() + 1)
+                    if progress.wasCanceled():
+                        break
+                    
                     files = mythen.find_mythen_files(n, visit=visit, year=year)
                     if files:
                         files = [ f for f in files if f not in self.scans ]
@@ -88,6 +96,9 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                         self.scans_model.setStringList(self.scans)
                     else:
                         not_found.append(n)
+
+                progress.setValue(progress.maximum())
+
                 if not_found:
                     error = QErrorMessage(self)
                     msg = "The following numbers were not found: "
@@ -100,15 +111,21 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         out_file, _selectedfilter = QFileDialog.getSaveFileName(caption="Save rebinned scans",
                                                                 dir=base,
                                                                 options=QFileDialog.AnyFile)
+
+        progress = QProgressDialog("Process scans...", "Stop", 0, 2*len(self.scans), self)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.forceShow()
+        progress.setValue(0)
         from mythen import load_all, process_and_save
-        data, files = load_all(self.scans, None, None)
+        data, files = load_all(self.scans, None, None, progress=progress)
         summed = True
         if self.rebin_rb.isChecked():
             summed = False
         elif self.sum_rb.isChecked():
             files = None
 
-        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), summed, files, out_file)
+        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), summed, files, out_file, progress=progress)
+        progress.setValue(progress.maximum())
 
     def keyPressEvent(self, event):
         k = event.key()

@@ -6,7 +6,7 @@ DEFAULT_BL_DIR = '/dls/i11/data'
 def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=('mac-[0-9]*.dat', 'mythen-[0-9]*.dat')):
     return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
-def rebin(mashed, angle, delta, summed, files):
+def rebin(mashed, angle, delta, summed, files, progress=None):
     '''
     mashed is list of tuples of 3 1-D arrays (angle, count, squared error)
     '''
@@ -36,6 +36,11 @@ def rebin(mashed, angle, delta, summed, files):
     use_sum = d * 10 < delta
 
     for i, (a, c, e) in enumerate(mashed):
+        if progress:
+            progress.setValue(progress.value() + 1)
+            if progress.wasCanceled():
+                break
+
         min_index = np.searchsorted(a, abeg) # slice out angles below start
         if min_index > 0:
             a = a[min_index:]
@@ -97,10 +102,14 @@ def rebin(mashed, angle, delta, summed, files):
     result[1:3] *= mul
     return result
 
-def load_all(files, visit, year):
+def load_all(files, visit, year, progress=None):
     data = []
     found = []
     for f in files:
+        if progress:
+            progress.setValue(progress.value() + 1)
+            if progress.wasCanceled():
+                break
         try:
             d = pyio.load(f)
             data.append(d)
@@ -112,7 +121,7 @@ def load_all(files, visit, year):
             found.extend(nfiles)
     return data, found
 
-def process_and_save(data, angle, delta, summed, files, output):
+def process_and_save(data, angle, delta, summed, files, output, progress=None):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
 
     nfiles = None
@@ -131,7 +140,7 @@ def process_and_save(data, angle, delta, summed, files, output):
             else:
                 nfiles.append(prefix + t)
 
-    result = rebin(mashed, angle, delta, summed, nfiles)
+    result = rebin(mashed, angle, delta, summed, nfiles, progress)
     if summed:
         result[2] = np.sqrt(result[2])
         np.savetxt(output, result.T, fmt=['%f', '%f', '%f', '%d'])
