@@ -112,6 +112,9 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                                                                 dir=base,
                                                                 options=QFileDialog.AnyFile)
 
+        if not out_file:
+            return
+
         progress = QProgressDialog("Process scans...", "Stop", 0, 2*len(self.scans), self)
         progress.setWindowModality(Qt.WindowModal)
         progress.forceShow()
