@@ -141,7 +141,7 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
                 nfiles.append(prefix + t)
 
     result = rebin(mashed, angle, delta, summed, nfiles, progress)
-    if summed:
+    if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
         np.savetxt(output, result.T, fmt=['%f', '%f', '%f', '%d'])
 
