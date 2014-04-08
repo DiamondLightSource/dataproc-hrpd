@@ -20,7 +20,7 @@ def rebin(mashed, angle, delta, summed, files):
         if t > amax:
             amax = t
 
-    abeg = ((amin - angle) // delta) * delta + angle
+    abeg = (max(0, amin - angle) // delta) * delta + angle
     aend = (((amax - angle) // delta) + 1) * delta + angle
     from math import ceil
     alen = int(ceil((aend - abeg)/delta))
@@ -34,7 +34,14 @@ def rebin(mashed, angle, delta, summed, files):
     d = (a[1:] - a[:-1]).min() # smallest change in angle
     assert d > 0
     use_sum = d * 10 < delta
+
     for i, (a, c, e) in enumerate(mashed):
+        min_index = np.searchsorted(a, abeg) # slice out angles below start
+        if min_index > 0:
+            a = a[min_index:]
+            c = c[min_index:]
+            e = e[min_index:]
+
         # need to linearly interpolate?
         inds = ((a - abeg) // delta).astype(np.int)
         nlen = inds.ptp() + 1
@@ -76,8 +83,11 @@ def rebin(mashed, angle, delta, summed, files):
         if files:
             # save
             wmax = nnweight.max()
-            mul  = np.where(nnweight == 0, 0, wmax/nnweight)
-            nresult[1:3] *= mul
+            if wmax > 0:
+                mul  = np.where(nnweight == 0, 0, wmax/nnweight)
+                nresult[1:3] *= mul
+            else:
+                nresult[1:3] *= 0
             nresult[2] = np.sqrt(nresult[2])
             np.savetxt(files[i], nresult.T, fmt=['%f', '%f', '%f', '%d'])
             
