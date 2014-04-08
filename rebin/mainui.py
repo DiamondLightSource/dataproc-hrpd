@@ -59,17 +59,26 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         visit = vtext if vtext else None
         return year, visit
 
-    def getBaseDirectory(self, processing=False):
-        year, visit = self.getYearAndVisit()
-        base = mythen.DEFAULT_BL_DIR
-        if year is not None:
-            import os.path as path
-            base = path.join(base, year)
-            if visit is not None:
-                if processing:
-                    base = path.join(base, visit, 'processing')
-                else:
-                    base = path.join(base, visit)
+    def getBaseDirectory(self, processing=False, scans=None):
+        import os.path as path
+        base = None
+        if scans:
+            base = path.dirname(scans[0])
+            if processing:
+                base = path.join(base, 'processing')
+            if not path.exists(base):
+                base = None
+
+        if base is None:
+            year, visit = self.getYearAndVisit()
+            base = mythen.DEFAULT_BL_DIR
+            if year is not None:
+                base = path.join(base, year)
+                if visit is not None:
+                    if processing:
+                        base = path.join(base, visit, 'processing')
+                    else:
+                        base = path.join(base, visit)
         return base
 
     def addScanNumbers(self):
@@ -107,7 +116,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                     error.showMessage(msg[:-2])
 
     def processScans(self):
-        base = self.getBaseDirectory(True)
+        base = self.getBaseDirectory(True, self.scans)
         out_file, _selectedfilter = QFileDialog.getSaveFileName(caption="Save rebinned scans",
                                                                 dir=base,
                                                                 options=QFileDialog.AnyFile)
