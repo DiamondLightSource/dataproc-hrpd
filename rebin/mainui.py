@@ -38,18 +38,39 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         self.range_ui.setupUi(self.range_dialog)
 
     def addScanFiles(self):
+        base = self.getBaseDirectory(False)
         files, _selectedfilter = QFileDialog.getOpenFileNames(caption="Select scan files",
                                                               filter="Data files(*.dat)",
+                                                              dir=base,
                                                               options=QFileDialog.ReadOnly)
-        
+        files = [ f for f in files if f not in self.scans ]
         self.scans.extend(files)
         self.scans_model.setStringList(self.scans)
-        
+
     def deleteFiles(self):
         rows = sorted([ i.row() for i in self.scans_view.selectedIndexes() ])
         for r in reversed(rows):
             del self.scans[r]
         self.scans_model.setStringList(self.scans)
+
+    def getYearAndVisit(self):
+        year = None if self.year_combo.currentIndex() == 0 else self.year_combo.currentText()
+        vtext = self.visit_edit.toPlainText()
+        visit = vtext if vtext else None
+        return year, visit
+
+    def getBaseDirectory(self, processing=False):
+        year, visit = self.getYearAndVisit()
+        base = mythen.DEFAULT_BL_DIR
+        if year is not None:
+            import os.path as path
+            base = path.join(base, year)
+            if visit is not None:
+                if processing:
+                    base = path.join(base, visit, 'processing')
+                else:
+                    base = path.join(base, visit)
+        return base
 
     def addScanNumbers(self):
         result = self.range_dialog.exec_()
@@ -58,12 +79,11 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
             if text:
                 not_found = []
                 numbers = mythen.parse_range_list(text)
-                vtext = self.visit_edit.toPlainText()
-                visit = vtext if vtext else None
-                year = None if self.year_combo.currentIndex() == 0 else self.year_combo.currentText()
+                year, visit = self.getYearAndVisit()
                 for n in numbers:
                     files = mythen.find_mythen_files(n, visit=visit, year=year)
                     if files:
+                        files = [ f for f in files if f not in self.scans ]
                         self.scans.extend(files)
                         self.scans_model.setStringList(self.scans)
                     else:
@@ -72,8 +92,10 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                     print("The following numbers were not found:", not_found)
 
     def processScans(self):
+        base = self.getBaseDirectory(True)
         out_file, _selectedfilter = QFileDialog.getSaveFileName(caption="Save rebinned scans",
-                                                              options=QFileDialog.AnyFile)
+                                                                dir=base,
+                                                                options=QFileDialog.AnyFile)
         from mythen import load_all, process_and_save
         data, files = load_all(self.scans, None, None)
         summed = True

@@ -1,7 +1,9 @@
 import numpy as np
 from dlsio import pyio # @UnresolvedImport
 
-def find_mythen_files(scan, visit=None, year=None, bl_dir='/dls/i11/data', ending=('mac-[0-9]*.dat', 'mythen-[0-9]*.dat')):
+DEFAULT_BL_DIR = '/dls/i11/data'
+
+def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=('mac-[0-9]*.dat', 'mythen-[0-9]*.dat')):
     return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
 def rebin(mashed, angle, delta, summed, files):
