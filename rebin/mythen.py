@@ -1,9 +1,9 @@
 import numpy as np
 from dlsio import pyio # @UnresolvedImport
 
-DEFAULT_BL_DIR = '/dls/i11/data'
+DEFAULT_BL_DIR = "/dls/i11/data"
 
-def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=('mac-[0-9]*.dat', 'mythen-[0-9]*.dat')):
+def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=("mac-[0-9]*.dat", "mythen-[0-9]*.dat")):
     return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
 def rebin(mashed, angle, delta, summed, files, progress=None):
@@ -94,7 +94,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None):
             else:
                 nresult[1:3] *= 0
             nresult[2] = np.sqrt(nresult[2])
-            np.savetxt(files[i], nresult.T, fmt=['%f', '%f', '%f', '%d'])
+            np.savetxt(files[i], nresult.T, fmt=["%f", "%f", "%f", "%d"])
             
     # correct for lower weights
     wmax = nweight.max()
@@ -128,13 +128,13 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
     if files: # work out prefix and new file names
         import os.path as path
         h, t = path.split(output)
-        i = t.rfind('.')
+        i = t.rfind(".")
         prefix = path.join(h, t[:i]) if i >= 0 else output
 
         nfiles = []
         for f in files:
             _h, t  = path.split(f)
-            i = t.rfind('-')
+            i = t.rfind("-") # find and use tail only
             if i >= 0:
                 nfiles.append(prefix + t[i:])
             else:
@@ -143,7 +143,7 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
     result = rebin(mashed, angle, delta, summed, nfiles, progress)
     if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
-        np.savetxt(output, result.T, fmt=['%f', '%f', '%f', '%d'])
+        np.savetxt(output, result.T, fmt=["%f", "%f", "%f", "%d"])
 
 def parse_range_list(lst):
     '''Parse a string like 0,2-7,20,35-9
