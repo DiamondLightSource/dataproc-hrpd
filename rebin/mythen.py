@@ -136,14 +136,41 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
             _h, t  = path.split(f)
             i = t.rfind("-") # find and use tail only
             if i >= 0:
-                nfiles.append(prefix + t[i:])
+                t = t[i:]
+            i = t.rfind(".") # find extension
+            if i >= 0:
+                e = t[i:]
+                t = t[:i]
             else:
-                nfiles.append(prefix + t)
+                e = None
+            if delta < 1:
+                t = "%s_reb_%03d" % (t, int(100*delta))
+            else:
+                t = "%s_reb_%.3f" % (t, delta)
+            if e: # append extension
+                t += e
+
+            nfiles.append(prefix + t)
 
     result = rebin(mashed, angle, delta, summed, nfiles, progress)
     if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
         np.savetxt(output, result.T, fmt=["%f", "%f", "%f", "%d"])
+
+    # report processing as txt file
+    h, t  = path.split(output)
+    i = t.rfind(".")
+    t = t[:i] if i >= 0 else t
+    proc = path.join(h, t + ".txt")
+
+    try:
+        p = open(proc, "w")
+        p.write("# Output starting at %f with bin size of %f\n" % (angle, delta))
+        p.write("# Used files:\n")
+        for f in files:
+            p.write("#    %s\n" % f)
+    finally:
+        p.close()
 
 def parse_range_list(lst):
     '''Parse a string like 0,2-7,20,35-9
