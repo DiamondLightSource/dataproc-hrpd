@@ -31,7 +31,7 @@ class PythonLoader(object):
         self.load_metadata = load_metadata
 
 from re import compile as _compile
-_begin_number = _compile(r'^[-+]?[\d]?\.?\d')
+_begin_number = _compile(r"^[-+]?[\d]?\.?\d")
 
 class SRSLoader(PythonLoader):
     '''
@@ -156,19 +156,19 @@ class SRSLoader(PythonLoader):
             ki = 0
             l = len(line)
             while ki < l:
-                kf = line.find('=', ki)
+                kf = line.find("=", ki)
                 if kf > 0:
                     k = line[ki:kf]
                     vi = kf+1
-                    nc = line.find(',', vi)
+                    nc = line.find(",", vi)
                     if nc < vi:
                         raise io_exception, "No comma found: " + line[vi:]
-                    qi = line.find('\'', vi)
+                    qi = line.find("'", vi)
                     if qi > 0 and qi < nc:
                         if qi != vi:
                             raise io_exception, "Quoted string does not follow equal sign: " + line[qi:]
                         # inside quoted string
-                        qf = line.find('\'', qi+1)
+                        qf = line.find("'", qi+1)
                         if qf > 0 and qf != (nc-1):
                             raise io_exception, "A comma does not follow a quoted string: " + line[qi:]
 
@@ -179,7 +179,7 @@ class SRSLoader(PythonLoader):
                 else:
                     raise io_exception, "No equal sign on line: " + line[ki:]
         else:
-            s = line.split('=',1)
+            s = line.split("=",1)
             if len(s) == 1:
                 raise io_exception, "Metadata did not contain equal sign: " + line
             meta.append((s[0], SRSLoader._parse_value(s[1])))
@@ -192,7 +192,7 @@ class SRSLoader(PythonLoader):
         1D NumPy arrays 
         '''
         import re
-        cs_regex = re.compile('\s+')
+        cs_regex = re.compile("\s+")
 
         if cols is None:
             # use first line
@@ -200,11 +200,11 @@ class SRSLoader(PythonLoader):
             lc = len(r)
             from math import log10, ceil
             p = ceil(log10(lc))
-            fmt = 'col%%0%dd' % p
+            fmt = "col%%0%dd" % p
             cols = [ fmt % (i+1,) for i in range(lc) ]
         else:
-            if cols.count('\t') > 0: # columns separated by tabs
-                cols = cols.split('\t')
+            if cols.count("\t") > 0: # columns separated by tabs
+                cols = cols.split("\t")
             else:
                 cols = cs_regex.split(cols)
             lc = len(cols)
@@ -214,14 +214,14 @@ class SRSLoader(PythonLoader):
             lr = len(r)
             if lr > lc:
                 if warn:
-                    print 'Long row!'
+                    print "Long row!"
                 lr = lc
             for i in range(lr):
                 data[i].append(SRSLoader._parse_value(r[i]))
 
             if lr < lc:
                 if warn:
-                    print 'Short row!'
+                    print "Short row!"
                 for i in range(lr, lc):
                     data[i].append(0)
 
@@ -243,8 +243,8 @@ class SRSLoader(PythonLoader):
                 try:
                     v = float(text)
                 except ValueError:
-                    if text.startswith('\''):
-                        if text.endswith('\''):
+                    if text.startswith("'"):
+                        if text.endswith("'"):
                             v = text[1:-1]
                         else:
                             raise io_exception, "No matching single quotes in string: " + text
@@ -326,7 +326,7 @@ class DLSLoader(SRSLoader):
                 othermeta.append(r)
             else:
                 if len(r) > 2 and warn:
-                    print 'Line has more than one colon:', l
+                    print "Line has more than one colon:", l
                 dlsmeta.append((r[0], l[len(r[0])+1:].strip()))
         return dlsmeta
 
@@ -351,20 +351,20 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
 
     scan = str(scan)
     if data_dir is None:
-        raise ValueError, 'Beamline data directory must be defined'
+        raise ValueError, "Beamline data directory must be defined"
 
     if type(ending) is str:
         ending = (ending,)
-    es = [ '*' + e for e in ending ]
+    es = [ "*" + e for e in ending ]
 
 
     if year is None:
-        years = (None, '20[0-9][0-9]')
+        years = (None, "20[0-9][0-9]")
     else:
         years = (str(year),)
 
     if visit is None:
-        visits = (None, '*')
+        visits = (None, "*")
     else:
         visits = (visit,)
 
