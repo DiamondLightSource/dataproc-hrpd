@@ -123,10 +123,10 @@ def load_all(files, visit, year, progress=None):
 
 def process_and_save(data, angle, delta, summed, files, output, progress=None):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
+    import os.path as path
 
     nfiles = None
     if files: # work out prefix and new file names
-        import os.path as path
         h, t = path.split(output)
         i = t.rfind(".")
         prefix = path.join(h, t[:i]) if i >= 0 else output
@@ -144,7 +144,7 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
             else:
                 e = None
             if delta < 1:
-                t = "%s_reb_%03d" % (t, int(100*delta))
+                t = "%s_reb_%03d" % (t, int(1000*delta))
             else:
                 t = "%s_reb_%.3f" % (t, delta)
             if e: # append extension
