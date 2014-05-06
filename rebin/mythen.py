@@ -6,7 +6,7 @@ DEFAULT_BL_DIR = "/dls/i11/data"
 def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=("mac-[0-9]*.dat", "mythen-[0-9]*.dat")):
     return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
-def rebin(mashed, angle, delta, summed, files, progress=None):
+def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
     '''
     mashed is list of tuples of 3 1-D arrays (angle, count, squared error)
     '''
@@ -94,7 +94,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None):
             else:
                 nresult[1:3] *= 0
             nresult[2] = np.sqrt(nresult[2])
-            np.savetxt(files[i], nresult.T, fmt=["%f", "%f", "%f", "%d"])
+            _save_file(files[i], nresult, weights)
             
     # correct for lower weights
     wmax = nweight.max()
@@ -121,7 +121,7 @@ def load_all(files, visit, year, progress=None):
             found.extend(nfiles)
     return data, found
 
-def process_and_save(data, angle, delta, summed, files, output, progress=None):
+def process_and_save(data, angle, delta, summed, files, output, progress=None, weights=True):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
     import os.path as path
 
@@ -152,10 +152,10 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
 
             nfiles.append(prefix + t)
 
-    result = rebin(mashed, angle, delta, summed, nfiles, progress)
+    result = rebin(mashed, angle, delta, summed, nfiles, progress, weights)
     if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
-        np.savetxt(output, result.T, fmt=["%f", "%f", "%f", "%d"])
+        _save_file(output, result, weights)
 
     # report processing as txt file
     h, t  = path.split(output)
@@ -171,6 +171,12 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None):
             p.write("#    %s\n" % f)
     finally:
         p.close()
+
+def _save_file(output, result, fourth=True):
+    if fourth:
+        np.savetxt(output, result.T, fmt=["%f", "%f", "%f", "%d"])
+    else:
+        np.savetxt(output, result[:3,].T, fmt=["%f", "%f", "%f"])
 
 def parse_range_list(lst):
     '''Parse a string like 0,2-7,20,35-9

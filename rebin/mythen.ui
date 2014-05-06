@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
+    <width>640</width>
     <height>422</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>380</x>
       <y>170</y>
-      <width>221</width>
+      <width>241</width>
       <height>111</height>
      </rect>
     </property>
@@ -61,7 +61,7 @@
       <double>1.000000000000000</double>
      </property>
      <property name="value">
-      <double>0.0010000000000000</double>
+      <double>0.001000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -96,7 +96,7 @@
      <rect>
       <x>380</x>
       <y>20</y>
-      <width>221</width>
+      <width>241</width>
       <height>141</height>
      </rect>
     </property>
@@ -259,7 +259,7 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>380</x>
       <y>280</y>
-      <width>221</width>
+      <width>241</width>
       <height>121</height>
      </rect>
     </property>
@@ -311,10 +311,10 @@ p, li { white-space: pre-wrap; }
     <widget class="QPushButton" name="process">
      <property name="geometry">
       <rect>
-       <x>120</x>
-       <y>30</y>
+       <x>130</x>
+       <y>40</y>
        <width>91</width>
-       <height>81</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="toolTip">
@@ -324,6 +324,22 @@ p, li { white-space: pre-wrap; }
       <string>Process
 and
 save...</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="weight_cb">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Include weight (number of bins used) as 4th column of output</string>
+     </property>
+     <property name="text">
+      <string>include weight</string>
      </property>
     </widget>
    </widget>

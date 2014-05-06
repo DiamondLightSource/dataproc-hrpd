@@ -98,7 +98,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                     if progress.wasCanceled():
                         break
                     
-                    files = mythen.find_mythen_files(n, visit=visit, year=year)
+                    files = mythen.find_mythen_files(n, visit=visit, year=year) # FIXME needs to be in separate thread(!)
                     if files:
                         files = [ f for f in files if f not in self.scans ]
                         self.scans.extend(files)
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         elif self.sum_rb.isChecked():
             files = None
 
-        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), summed, files, out_file, progress=progress)
+        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked())
         progress.setValue(progress.maximum())
 
     def keyPressEvent(self, event):

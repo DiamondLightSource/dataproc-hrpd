@@ -14,11 +14,11 @@ from PySide import QtCore, QtGui
 class Ui_mythen_gui(object):
     def setupUi(self, mythen_gui):
         mythen_gui.setObjectName("mythen_gui")
-        mythen_gui.resize(622, 422)
+        mythen_gui.resize(640, 422)
         self.centralwidget = QtGui.QWidget(mythen_gui)
         self.centralwidget.setObjectName("centralwidget")
         self.parameter_group = QtGui.QGroupBox(self.centralwidget)
-        self.parameter_group.setGeometry(QtCore.QRect(380, 170, 221, 111))
+        self.parameter_group.setGeometry(QtCore.QRect(380, 170, 241, 111))
         self.parameter_group.setObjectName("parameter_group")
         self.angle_spinbox = QtGui.QDoubleSpinBox(self.parameter_group)
         self.angle_spinbox.setGeometry(QtCore.QRect(90, 30, 62, 31))
@@ -38,7 +38,7 @@ class Ui_mythen_gui(object):
         self.label_2.setGeometry(QtCore.QRect(10, 80, 57, 14))
         self.label_2.setObjectName("label_2")
         self.dls_group = QtGui.QGroupBox(self.centralwidget)
-        self.dls_group.setGeometry(QtCore.QRect(380, 20, 221, 141))
+        self.dls_group.setGeometry(QtCore.QRect(380, 20, 241, 141))
         self.dls_group.setObjectName("dls_group")
         self.label_3 = QtGui.QLabel(self.dls_group)
         self.label_3.setGeometry(QtCore.QRect(10, 30, 57, 14))
@@ -73,7 +73,7 @@ class Ui_mythen_gui(object):
         self.delete_selection.setGeometry(QtCore.QRect(190, 320, 131, 31))
         self.delete_selection.setObjectName("delete_selection")
         self.output_group = QtGui.QGroupBox(self.centralwidget)
-        self.output_group.setGeometry(QtCore.QRect(380, 280, 221, 121))
+        self.output_group.setGeometry(QtCore.QRect(380, 280, 241, 121))
         self.output_group.setObjectName("output_group")
         self.rebin_rb = QtGui.QRadioButton(self.output_group)
         self.rebin_rb.setGeometry(QtCore.QRect(10, 30, 109, 26))
@@ -86,8 +86,11 @@ class Ui_mythen_gui(object):
         self.both_rb.setChecked(True)
         self.both_rb.setObjectName("both_rb")
         self.process = QtGui.QPushButton(self.output_group)
-        self.process.setGeometry(QtCore.QRect(120, 30, 91, 81))
+        self.process.setGeometry(QtCore.QRect(130, 40, 91, 71))
         self.process.setObjectName("process")
+        self.weight_cb = QtGui.QCheckBox(self.output_group)
+        self.weight_cb.setGeometry(QtCore.QRect(110, 10, 131, 22))
+        self.weight_cb.setObjectName("weight_cb")
         mythen_gui.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(mythen_gui)
         self.statusbar.setObjectName("statusbar")
@@ -129,4 +132,5 @@ class Ui_mythen_gui(object):
         self.process.setText(QtGui.QApplication.translate("mythen_gui", "Process\n"
 "and\n"
 "save...", None, QtGui.QApplication.UnicodeUTF8))
-
+        self.weight_cb.setToolTip(QtGui.QApplication.translate("mythen_gui", "Include weight (number of bins used) as 4th column of output", None, QtGui.QApplication.UnicodeUTF8))
+        self.weight_cb.setText(QtGui.QApplication.translate("mythen_gui", "include weight", None, QtGui.QApplication.UnicodeUTF8))
