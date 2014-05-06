@@ -29,6 +29,7 @@ class Ui_mythen_gui(object):
         self.delta_spinbox.setGeometry(QtCore.QRect(90, 70, 62, 31))
         self.delta_spinbox.setDecimals(3)
         self.delta_spinbox.setMaximum(1.0)
+        self.delta_spinbox.setSingleStep(0.001)
         self.delta_spinbox.setProperty("value", 0.001)
         self.delta_spinbox.setObjectName("delta_spinbox")
         self.label = QtGui.QLabel(self.parameter_group)
