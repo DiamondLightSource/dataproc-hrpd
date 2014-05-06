@@ -135,6 +135,9 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
         for f in files:
             _h, t  = path.split(f)
             i = t.rfind("-") # find and use tail only
+            j = t.rfind("_") # find and use tail only
+            if j > i:
+                i = j
             if i >= 0:
                 t = t[i:]
             i = t.rfind(".") # find extension
