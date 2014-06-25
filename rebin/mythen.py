@@ -175,6 +175,20 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
     finally:
         p.close()
 
+
+def delta_for(bin_ratio, data):
+    nbins =  len(data[0][0])
+    angles = data[0][0]
+    angle_diff = angles[-1] - angles[0]
+    return angle_diff/(nbins/bin_ratio)
+
+def process_and_save_all(data, angle, bin_ratios, summed, files, output, progress=None, weights=True):
+
+    for br in bin_ratios:
+        delta = delta_for(br, data)
+        process_and_save_all(data, angle, delta, summed, files, output, progress=None, weights=True)
+
+
 def _save_file(output, result, fourth=True):
     if fourth:
         np.savetxt(output, result.T, fmt=["%f", "%f", "%f", "%d"])
