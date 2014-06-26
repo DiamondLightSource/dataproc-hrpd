@@ -186,8 +186,7 @@ def process_and_save_all(data, angle, bin_ratios, summed, files, output, progres
 
     for br in bin_ratios:
         delta = delta_for(br, data)
-        process_and_save_all(data, angle, delta, summed, files, output, progress=None, weights=True)
-
+        process_and_save(data, angle, delta, summed, files, output, progress=None, weights=True)
 
 def _save_file(output, result, fourth=True):
     if fourth:
