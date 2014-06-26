@@ -12,10 +12,8 @@ def main(args=None):
     parser.add_argument('-a', '--angle', action='store', type=float, dest='angle', default=0., 
             help='Specify 2theta angle for a bin edge, in degrees')
     binning = parser.add_mutually_exclusive_group()
-    binning.add_argument('-d', '--delta', action='store', type=float, dest='delta', default=0.1, help='Specify 2theta bin size, in degrees')
-    binning.add_argument('-b', '--bin-ratio', action='append', type=float, dest='bin_ratios', 
-            help='The number of bins in the input per bin in the result')
-    binning.add_argument('-b235', action='store_true', default=False, help='Equivalent to "-b 2 -b 3 -b 5"')
+    binning.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=[0.1], help='Specify 2theta bin size, in degrees')
+    binning.add_argument('-d235', action='store_true', default=False, help='Rebin with deltas of 2,3 and 5')
 
     parser.add_argument('-r', '--rebin', action='store_true', dest='rebin', default=False, help='Output rebinned data')
     parser.add_argument('+r', '--no-rebin', action='store_false', dest='rebin', help='Do not output rebinned data [default]')
@@ -26,15 +24,16 @@ def main(args=None):
     parser.add_argument('-o', '--output', action='store', dest='output', default='out.dat', help='Output file')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
+    if args.d235: args.delta = [2, 3, 5]
 
     data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
 
-    if args.b235: args.bin_ratios = [2., 3., 5.]
+    if not args.rebin:
+        nfiles = None
 
-    if not args.bin_ratios:
-        mythen.process_and_save(data, args.angle, args.delta, args.sum, nfiles, args.output)
-    else:
-        mythen.process_and_save_all(data, args.angle, args.bin_ratios, args.sum, nfiles, args.output)
+    for delta in args.delta:
+        mythen.process_and_save(data, args.angle, delta, args.sum, nfiles, args.output, progress=None, weights=True)
+
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])

@@ -125,13 +125,16 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
     import os.path as path
 
-    nfiles = None
-    if files: # work out prefix and new file names
-        h, t = path.split(output)
-        i = t.rfind(".")
-        prefix = path.join(h, t[:i]) if i >= 0 else output
+    h, t = path.split(output)
+    i = t.rfind(".")
+    ext = t[i:] if i >= 0 else ''
+    prefix = path.join(h, t[:i]) if i >= 0 else output
 
-        nfiles = []
+    # format of delta in output filenames
+    sd = "%03d" % int(1000*delta) if delta > 1 else ("%.3f" % delta).replace('.', '')
+
+    nfiles = []
+    if files: # work out prefix and new file names
         for f in files:
             _h, t  = path.split(f)
             i = t.rfind("-") # find and use tail only
@@ -146,10 +149,7 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
                 t = t[:i]
             else:
                 e = None
-            if delta < 1:
-                t = "%s_reb_%03d" % (t, int(1000*delta))
-            else:
-                t = "%s_reb_%.3f" % (t, delta)
+            t += '_reb_' + sd # append delta
             if e: # append extension
                 t += e
 
@@ -158,7 +158,9 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
     result = rebin(mashed, angle, delta, summed, nfiles, progress, weights)
     if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
-        _save_file(output, result, weights)
+        # temp: determine where to save summed data
+        summed_out = prefix + '_summed_' + sd + ext
+        _save_file(summed_out, result, weights)
 
     # report processing as txt file
     h, t  = path.split(output)
@@ -175,19 +177,6 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
     finally:
         p.close()
 
-
-def delta_for(bin_ratio, data):
-    angles = data[0][0]
-    nbins =  len(angles)
-    angle_diff = angles[-1] - angles[0]
-    assert angle_diff > 0
-    return angle_diff/(nbins/bin_ratio)
-
-def process_and_save_all(data, angle, bin_ratios, summed, files, output, progress=None, weights=True):
-
-    for br in bin_ratios:
-        delta = delta_for(br, data)
-        process_and_save(data, angle, delta, summed, files, output, progress=None, weights=True)
 
 def _save_file(output, result, fourth=True):
     if fourth:
