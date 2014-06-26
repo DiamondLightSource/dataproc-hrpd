@@ -13,7 +13,7 @@ def main(args=None):
             help='Specify 2theta angle for a bin edge, in degrees')
     binning = parser.add_mutually_exclusive_group()
     binning.add_argument('-d', '--delta', action='store', type=float, dest='delta', default=0.1, help='Specify 2theta bin size, in degrees')
-    binning.add_argument('-b', '--bin-ratio', action='append', type=float, dest='bin_ratio', 
+    binning.add_argument('-b', '--bin-ratio', action='append', type=float, dest='bin_ratios', 
             help='The number of bins in the input per bin in the result')
     binning.add_argument('-b235', action='store_true', default=False, help='Equivalent to "-b 2 -b 3 -b 5"')
 
@@ -29,14 +29,12 @@ def main(args=None):
 
     data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
 
-    if not args.rebin:
-        nfiles = None
-    if args.b235: args.bin_ratio = [2., 3., 5.]
+    if args.b235: args.bin_ratios = [2., 3., 5.]
 
-    if args.bin_ratio is None:
+    if not args.bin_ratios:
         mythen.process_and_save(data, args.angle, args.delta, args.sum, nfiles, args.output)
     else:
-        mythen.process_and_save_all(data, args.angle, args.bin_ratio, args.sum, nfiles, args.output)
+        mythen.process_and_save_all(data, args.angle, args.bin_ratios, args.sum, nfiles, args.output)
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])

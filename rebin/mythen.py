@@ -177,9 +177,10 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
 
 
 def delta_for(bin_ratio, data):
-    nbins =  len(data[0][0])
     angles = data[0][0]
+    nbins =  len(angles)
     angle_diff = angles[-1] - angles[0]
+    assert angle_diff > 0
     return angle_diff/(nbins/bin_ratio)
 
 def process_and_save_all(data, angle, bin_ratios, summed, files, output, progress=None, weights=True):
