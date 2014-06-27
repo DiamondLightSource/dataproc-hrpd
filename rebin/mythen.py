@@ -123,9 +123,9 @@ def load_all(files, visit, year, progress=None):
 
 
 
+import os.path as path
 def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
-    import os.path as path
 
     if output:
         out_dir, fname = path.split(output)
@@ -183,8 +183,9 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
         _save_file(summed_out, result, weights)
 
 
+
+def report_processing(files, output, angle, deltas):
     # report processing as txt file
-    if not output: output = prefix
     h, t  = path.split(output)
     i = t.rfind(".")
     t = t[:i] if i >= 0 else t
@@ -192,7 +193,10 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
 
     try:
         p = open(proc, "w")
-        p.write("# Output starting at %f with bin size of %f\n" % (angle, delta))
+        p.write("# Output starting at %f with bin sizes: " % angle)
+        for delta in deltas[:-1]:
+            p.write("%f,  " % delta) 
+        p.write("%f\n" % deltas[-1])
         p.write("# Used files:\n")
         for f in files:
             p.write("#    %s\n" % f)

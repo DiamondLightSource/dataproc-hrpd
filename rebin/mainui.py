@@ -128,7 +128,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         progress.setWindowModality(Qt.WindowModal)
         progress.forceShow()
         progress.setValue(0)
-        from mythen import load_all, process_and_save
+        from mythen import load_all, process_and_save, report_processing
         data, files = load_all(self.scans, None, None, progress=progress)
         summed = True
         rebinned = True
@@ -139,7 +139,9 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
             summed = True
             rebinned = False
 
-        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), rebinned, summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked())
+        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(),
+                rebinned, summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked())
+        report_processing(files, out_file, self.angle_spinbox.value(), [self.delta_spinbox.value()])
         progress.setValue(progress.maximum())
 
     def keyPressEvent(self, event):
