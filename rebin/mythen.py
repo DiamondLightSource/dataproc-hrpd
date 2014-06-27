@@ -122,6 +122,36 @@ def load_all(files, visit, year, progress=None):
     return data, found
 
 import os.path as path
+def parse_metadata(files):
+    import re, sys
+    mythen_reg = r'^\d+[-_](mac|mythen)[-_]\d*\.dat$'
+    filesets = []
+    for f in files:
+        dir, dat_file = path.split(f)
+        if not re.match(r'^\d+\.dat$', dat_file): 
+            print 'ERROR: With the -p option rebin expects only files of the form <number>.dat'
+            sys.exit(1)
+
+        d = pyio.load(f)
+        mythen_files = []
+        for k in d.keys():
+            if k is not 'metadata':
+                for v in d[k]:
+                    match = re.match(mythen_reg, str(v))
+                    if match: mythen_files.append(path.join(dir, match.group(0)))
+
+        if not mythen_files: 
+            print 'WARNING: The file %s contains no names of mythen or mac datafiles' % f
+        filesets.append(mythen_files)
+
+    return filesets
+
+def parse_metadata_and_load(files):
+    filesets = parse_metadata(files)
+    datasets = [load_all(fls, visit=None, year=None) for fls in filesets]
+    return datasets, filesets
+
+
 def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
 
@@ -200,18 +230,14 @@ def report_processing(files, output, angle, deltas):
         p.close()
 
 
-def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True, preserve=False):
-    if preserve:
-        for f in files:
-            parse_metadata(f)
+def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True):
 
-    else:
-        for delta in delta:
-            report = mythen.process_and_save(data, angle, deltas, rebinned, summed, nfiles, output, progress=None, weights=True)
+    for delta in delta:
+        report = mythen.process_and_save(data, angle, deltas, rebinned, summed, nfiles, output, progress=None, weights=True)
 
-        if not output:
-            output = 'out' # default name for reporting file; out.txt
-        mythen.report_processing(nfiles, output, angle, delta)
+    if not output:
+        output = 'out' # default name for reporting file; out.txt
+    mythen.report_processing(nfiles, output, angle, delta)
 
 
 

@@ -23,9 +23,15 @@ def main(args=None):
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
 
-    data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
-
-    mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, nfiles, args.output, progress=None, weights=True, preserve=preserve)
+    output = args.output
+    if args.preserve:
+        datasets, filesets = mythen.parse_metadata_and_load(args.files)
+        for data, files in zip(datasets, filesets):
+            output = mythen.preserve_filesystem()
+            mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, files, output)
+    else:
+        data, nfiles = mythen.load_all(files, visit=visit, year=year)
+        mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, nfiles, output)
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])
