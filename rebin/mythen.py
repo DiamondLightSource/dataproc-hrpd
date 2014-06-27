@@ -121,8 +121,6 @@ def load_all(files, visit, year, progress=None):
             found.extend(nfiles)
     return data, found
 
-
-
 import os.path as path
 def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
@@ -182,8 +180,6 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
         summed_out = prefix + '_summed_' + sd + ext
         _save_file(summed_out, result, weights)
 
-
-
 def report_processing(files, output, angle, deltas):
     # report processing as txt file
     h, t  = path.split(output)
@@ -202,6 +198,21 @@ def report_processing(files, output, angle, deltas):
             p.write("#    %s\n" % f)
     finally:
         p.close()
+
+
+def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True, preserve=False):
+    if preserve:
+        for f in files:
+            parse_metadata(f)
+
+    else:
+        for delta in delta:
+            report = mythen.process_and_save(data, angle, deltas, rebinned, summed, nfiles, output, progress=None, weights=True)
+
+        if not output:
+            output = 'out' # default name for reporting file; out.txt
+        mythen.report_processing(nfiles, output, angle, delta)
+
 
 
 def _save_file(output, result, fourth=True):

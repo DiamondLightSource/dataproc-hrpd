@@ -19,18 +19,13 @@ def main(args=None):
     parser.add_argument('-v', '--visit', action='store', dest='visit', default=None, help='Visit ID')
     parser.add_argument('-y', '--year', action='store', type=int, dest='year', default=None, help='Year')
     parser.add_argument('-o', '--output', action='store', dest='output', default=None, help='Output file')
+    parser.add_argument('-p', '--preserve', action='store_true', dest='preserve', default=None, help='Rebins to "processed" directory')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
 
     data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
 
-    for delta in args.delta:
-        report = mythen.process_and_save(data, args.angle, delta, args.rebin, args.sum, nfiles, args.output, progress=None, weights=True)
-
-    if not args.output:
-        args.output = 'out' # default name for reporting file; out.txt
-    mythen.report_processing(nfiles, args.output, args.angle, args.delta)
-
+    mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, nfiles, args.output, progress=None, weights=True, preserve=preserve)
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])
