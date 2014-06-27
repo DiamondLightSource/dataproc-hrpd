@@ -121,28 +121,37 @@ def load_all(files, visit, year, progress=None):
             found.extend(nfiles)
     return data, found
 
-def process_and_save(data, angle, delta, summed, files, output, progress=None, weights=True):
+
+
+def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
     import os.path as path
 
-    h, t = path.split(output)
-    i = t.rfind(".")
-    ext = t[i:] if i >= 0 else ''
-    prefix = path.join(h, t[:i]) if i >= 0 else output
+    if output:
+        out_dir, fname = path.split(output)
+        i = fname.rfind(".")
+        ext = fname[i:] if i >= 0 else ''
+        prefix = path.join(out_dir, fname[:i]) if i >= 0 else output
+    else:
+        out_dir = ''
 
-    # format of delta in output filenames
+    # format of delta in output filenames 
     sd = "%03d" % int(1000*delta) if delta > 1 else ("%.3f" % delta).replace('.', '')
 
     nfiles = []
-    if files: # work out prefix and new file names
-        for f in files:
-            _h, t  = path.split(f)
-            i = t.rfind("-") # find and use tail only
-            j = t.rfind("_") # find and use tail only
-            if j > i:
-                i = j
-            if i >= 0:
-                t = t[i:]
+    fbases = []
+    # work out prefix and new rebin file names
+    for f in files:
+        _h, t  = path.split(f)
+        i = t.rfind("-") # find and use tail only
+        j = t.rfind("_") # find and use tail only
+        if j > i:
+            i = j
+        if i >= 0:
+            fbase = t[:i]
+            t = t[i:]
+            fbases.append(fbase)
+        if rebinned:
             i = t.rfind(".") # find extension
             if i >= 0:
                 e = t[i:]
@@ -152,17 +161,30 @@ def process_and_save(data, angle, delta, summed, files, output, progress=None, w
             t += '_reb_' + sd # append delta
             if e: # append extension
                 t += e
+            nfiles.append(path.join(out_dir, fbase + t))
 
-            nfiles.append(prefix + t)
 
     result = rebin(mashed, angle, delta, summed, nfiles, progress, weights)
     if summed and (progress is None or not progress.wasCanceled()):
         result[2] = np.sqrt(result[2])
-        # temp: determine where to save summed data
+        # Work out an output filename of summed data 
+        # It should be possible to determine which files where used by the name of the output file
+        if not output: 
+            if len(set(fbases)) is 1: # If all the prefixes are identical just use it
+                prefix = set(fbases).pop()
+            else:
+                prefix = ''
+                for f in files:
+                    prefix += path.splitext(path.split(f)[1])[0] + '_'
+                prefix = prefix[:-1] # remove trailing _ char
+            ext =  path.splitext(files[0])[1] # Use the filename extension of the first file
+
         summed_out = prefix + '_summed_' + sd + ext
         _save_file(summed_out, result, weights)
 
+
     # report processing as txt file
+    if not output: output = prefix
     h, t  = path.split(output)
     i = t.rfind(".")
     t = t[:i] if i >= 0 else t

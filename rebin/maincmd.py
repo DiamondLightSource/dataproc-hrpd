@@ -11,28 +11,25 @@ def main(args=None):
                             prefix_chars='-+')
     parser.add_argument('-a', '--angle', action='store', type=float, dest='angle', default=0., 
             help='Specify 2theta angle for a bin edge, in degrees')
-    binning = parser.add_mutually_exclusive_group()
-    binning.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=[0.1], help='Specify 2theta bin size, in degrees')
-    binning.add_argument('-d235', action='store_true', default=False, help='Rebin with deltas of 2,3 and 5')
-
+    parser.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=[0.1], help='Specify 2theta bin size, in degrees')
+    parser.add_argument('-d235', action='store_true', default=False, help='Use deltas of 2, 3 and 5 for rebinning. Equivalent to "-d 2 -d 3 -d 5"')
     parser.add_argument('-r', '--rebin', action='store_true', dest='rebin', default=False, help='Output rebinned data')
     parser.add_argument('+r', '--no-rebin', action='store_false', dest='rebin', help='Do not output rebinned data [default]')
     parser.add_argument('-s', '--sum', action='store_true', dest='sum', default=True, help='Output summed data [default]')
     parser.add_argument('+s', '--no-sum', action='store_false', dest='sum', help='Do not output summed data')
     parser.add_argument('-v', '--visit', action='store', dest='visit', default=None, help='Visit ID')
     parser.add_argument('-y', '--year', action='store', type=int, dest='year', default=None, help='Year')
-    parser.add_argument('-o', '--output', action='store', dest='output', default='out.dat', help='Output file')
+    parser.add_argument('-o', '--output', action='store', dest='output', default=None, help='Output file')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
-    if args.d235: args.delta = [2, 3, 5]
+    if args.d235: 
+        if args.delta: args.delta.extend([2, 3, 5])
+        else: args.delta = [2, 3, 5]
 
     data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
 
-    if not args.rebin:
-        nfiles = None
-
     for delta in args.delta:
-        mythen.process_and_save(data, args.angle, delta, args.sum, nfiles, args.output, progress=None, weights=True)
+        mythen.process_and_save(data, args.angle, delta, args.rebin, args.sum, nfiles, args.output, progress=None, weights=True)
 
 
 if __name__ == '__main__':

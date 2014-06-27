@@ -131,12 +131,15 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         from mythen import load_all, process_and_save
         data, files = load_all(self.scans, None, None, progress=progress)
         summed = True
+        rebinned = True
         if self.rebin_rb.isChecked():
             summed = False
+            rebinned = True
         elif self.sum_rb.isChecked():
-            files = None
+            summed = True
+            rebinned = False
 
-        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked())
+        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(), rebinned, summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked())
         progress.setValue(progress.maximum())
 
     def keyPressEvent(self, event):
