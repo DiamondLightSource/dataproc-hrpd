@@ -134,9 +134,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         rebinned = True
         if self.rebin_rb.isChecked():
             summed = False
-            rebinned = True
         elif self.sum_rb.isChecked():
-            summed = True
             rebinned = False
 
         process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(),

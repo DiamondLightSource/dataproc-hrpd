@@ -11,7 +11,7 @@ def main(args=None):
                             prefix_chars='-+')
     parser.add_argument('-a', '--angle', action='store', type=float, dest='angle', default=0., 
             help='Specify 2theta angle for a bin edge, in degrees')
-    parser.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=None, help='Specify 2theta bin size, in degrees')
+    parser.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=[0.1], help='Specify 2theta bin size, in degrees')
     parser.add_argument('-r', '--rebin', action='store_true', dest='rebin', default=False, help='Output rebinned data')
     parser.add_argument('+r', '--no-rebin', action='store_false', dest='rebin', help='Do not output rebinned data [default]')
     parser.add_argument('-s', '--sum', action='store_true', dest='sum', default=True, help='Output summed data [default]')
@@ -19,19 +19,22 @@ def main(args=None):
     parser.add_argument('-v', '--visit', action='store', dest='visit', default=None, help='Visit ID')
     parser.add_argument('-y', '--year', action='store', type=int, dest='year', default=None, help='Year')
     parser.add_argument('-o', '--output', action='store', dest='output', default=None, help='Output file')
-    parser.add_argument('-p', '--preserve', action='store_true', dest='preserve', default=None, help='Rebins to "processed" directory')
+    parser.add_argument('-p', '--preserve', action='store_true', dest='preserve', default=None,
+            help='Parses a .dat file to find mythen files and rebins to "processed" directory')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
 
     output = args.output
+    data, nfiles = None, None
     if args.preserve:
-        datasets, filesets = mythen.parse_metadata_and_load(args.files)
-        for data, files in zip(datasets, filesets):
-            output = mythen.preserve_filesystem()
-            mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, files, output)
+        for file in args.files:
+            data, nfiles = mythen.parse_metadata_and_load(file)
+            if not nfiles: continue # At the moment, skip over mythen and summed data files without exiting
+            output = mythen.preserve_filesystem(nfiles[0], output)
+            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
     else:
-        data, nfiles = mythen.load_all(files, visit=visit, year=year)
-        mythen.process_and_save_all(data, args.angle, delta, args.rebin, args.sum, nfiles, output)
+        data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
+        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])

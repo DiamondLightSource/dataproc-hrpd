@@ -122,34 +122,48 @@ def load_all(files, visit, year, progress=None):
     return data, found
 
 import os.path as path
-def parse_metadata(files):
-    import re, sys
-    mythen_reg = r'^\d+[-_](mac|mythen)[-_]\d*\.dat$'
-    filesets = []
-    for f in files:
-        dir, dat_file = path.split(f)
-        if not re.match(r'^\d+\.dat$', dat_file): 
-            print 'ERROR: With the -p option rebin expects only files of the form <number>.dat'
-            sys.exit(1)
+import os
+def parse_metadata(f):
+    import re
+    mythen_reg = r'^\d+[-_](mac|mythen)[-_]\d*\.dat$' # Unused
+    dir, dat_file = path.split(f)
+    d = pyio.load(f)
+    mythen_files = []
+    for k in d.keys():
+        if k is not 'metadata':
+            for v in d[k]:
+                match = re.match(r'.*\.dat', str(v))
+                if match: mythen_files.append(path.join(dir, match.group(0)))
 
-        d = pyio.load(f)
-        mythen_files = []
-        for k in d.keys():
-            if k is not 'metadata':
-                for v in d[k]:
-                    match = re.match(mythen_reg, str(v))
-                    if match: mythen_files.append(path.join(dir, match.group(0)))
-
-        if not mythen_files: 
-            print 'WARNING: The file %s contains no names of mythen or mac datafiles' % f
-        filesets.append(mythen_files)
-
-    return filesets
+    if not mythen_files: 
+        print 'WARNING: The file %s contains no names of .dat files' % f
+    return mythen_files
 
 def parse_metadata_and_load(files):
-    filesets = parse_metadata(files)
-    datasets = [load_all(fls, visit=None, year=None) for fls in filesets]
-    return datasets, filesets
+    nfiles = parse_metadata(files)
+    data = load_all(nfiles, visit=None, year=None)[0]
+    return data, nfiles
+
+def preserve_filesystem(dpath, output):
+    #base = '/'
+    base = '/home/voo82367' # For testing
+    def split_at_visit(dpath): #Split the path on the visit data directory in a naive way
+        assert dpath.startswith(base) # For testing
+        br = len(base.split('/')) + 5
+
+        spath = dpath.split('/')
+        dir, file = '/'.join(spath[:br]), '/'.join(spath[br:])
+        return dir, file
+
+    data_dir, file = split_at_visit(dpath)
+    local_dir, file = path.split(file)
+    out = path.join(data_dir, 'processed/' + local_dir) + '/'
+
+    if output: out = path.join(out, output)
+    out_dir = path.split(out)[0]
+    if not path.exists(out_dir):
+        os.makedirs(out_dir)
+    return out
 
 
 def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
@@ -197,18 +211,22 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
         result[2] = np.sqrt(result[2])
         # Work out an output filename of summed data 
         # It should be possible to determine which files where used by the name of the output file
-        if not output: 
-            if len(set(fbases)) is 1: # If all the prefixes are identical just use it
-                prefix = set(fbases).pop()
+        if not output or not path.split(output)[1]:
+            fbase = set(fbases)
+            if len(fbase) is 1: # If all the prefixes are identical just use it
+                prefix = fbase.pop()
             else:
                 prefix = ''
                 for f in files:
                     prefix += path.splitext(path.split(f)[1])[0] + '_'
                 prefix = prefix[:-1] # remove trailing _ char
             ext =  path.splitext(files[0])[1] # Use the filename extension of the first file
+            prefix = path.join(out_dir, prefix)
 
         summed_out = prefix + '_summed_' + sd + ext
         _save_file(summed_out, result, weights)
+
+    return prefix
 
 def report_processing(files, output, angle, deltas):
     # report processing as txt file
@@ -232,12 +250,12 @@ def report_processing(files, output, angle, deltas):
 
 def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True):
 
-    for delta in delta:
-        report = mythen.process_and_save(data, angle, deltas, rebinned, summed, nfiles, output, progress=None, weights=True)
+    for delta in deltas:
+        prefix = process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True)
 
     if not output:
-        output = 'out' # default name for reporting file; out.txt
-    mythen.report_processing(nfiles, output, angle, delta)
+        output = prefix
+    report_processing(files, prefix, angle, deltas) 
 
 
 
