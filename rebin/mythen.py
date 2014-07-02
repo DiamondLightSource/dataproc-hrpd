@@ -147,7 +147,7 @@ def parse_metadata_and_load(files):
 def preserve_filesystem(dpath, output):
     #base = '/'
     base = '/home/voo82367' # For testing
-    def split_at_visit(dpath): #Split the path on the visit data directory in a naive way
+    def split_at_visit(dpath): #Split the path at the visit data directory in a naive way
         assert dpath.startswith(base) # For testing
         br = len(base.split('/')) + 5
 

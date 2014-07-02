@@ -19,14 +19,14 @@ def main(args=None):
     parser.add_argument('-v', '--visit', action='store', dest='visit', default=None, help='Visit ID')
     parser.add_argument('-y', '--year', action='store', type=int, dest='year', default=None, help='Year')
     parser.add_argument('-o', '--output', action='store', dest='output', default=None, help='Output file')
-    parser.add_argument('-p', '--preserve', action='store_true', dest='preserve', default=None,
+    parser.add_argument('-p', '--processed', action='store_true', dest='processed', default=None,
             help='Parses a .dat file to find mythen files and rebins to "processed" directory')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
 
     output = args.output
     data, nfiles = None, None
-    if args.preserve:
+    if args.processed:
         for file in args.files:
             data, nfiles = mythen.parse_metadata_and_load(file)
             if not nfiles: continue # At the moment, skip over mythen and summed data files without exiting
