@@ -145,13 +145,14 @@ def parse_metadata_and_load(files):
     return data, nfiles
 
 def preserve_filesystem(dpath, output):
-    #base = '/'
-    base = '/home/voo82367' # For testing
-    def split_at_visit(dpath): #Split the path at the visit data directory in a naive way
-        assert dpath.startswith(base) # For testing
-        br = len(base.split('/')) + 5
-
+    def split_at_visit(dpath): # Split at the visit directory by finding the first /data/ directory
         spath = dpath.split('/')
+        try:
+            di = spath.index('data')
+        except ValueError:
+            print 'Cannot save the data into a directory data/year/visit/processed/ if input is not under data/year/visit/'
+            raise
+        br = di + 3
         dir, file = '/'.join(spath[:br]), '/'.join(spath[br:])
         return dir, file
 
@@ -216,10 +217,7 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
             if len(fbase) is 1: # If all the prefixes are identical just use it
                 prefix = fbase.pop()
             else:
-                prefix = ''
-                for f in files:
-                    prefix += path.splitext(path.split(f)[1])[0] + '_'
-                prefix = prefix[:-1] # remove trailing _ char
+                prefix = '_'.join([path.splitext(path.split(f)[1])[0] for f in files])
             ext =  path.splitext(files[0])[1] # Use the filename extension of the first file
             prefix = path.join(out_dir, prefix)
 
