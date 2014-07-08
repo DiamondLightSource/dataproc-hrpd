@@ -25,22 +25,17 @@ def main(args=None):
     args = parser.parse_args(args)
     if not args.delta: args.delta = [0.1] # default delta value
 
-    #load
-    datasets, filesets = [], []
+
+    output = args.output
     if args.mythen:
         for file in args.files:
             data, nfiles = mythen.parse_metadata_and_load(file)
-            datasets.append(data), filesets.append(nfiles)
+            if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
+            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
     else:
         data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
-        datasets.append(data), filesets.append(nfiles)
-
-    # process
-    output = args.output
-    for data, nfiles in zip(datasets, filesets):
         if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
         mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
-
 
 
 if __name__ == '__main__':
