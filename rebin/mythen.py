@@ -145,6 +145,7 @@ def parse_metadata_and_load(files):
     return data, nfiles
 
 def preserve_filesystem(dpath, output):
+    dpath = path.realpath(dpath)
     def split_at_visit(dpath): # Split at the visit directory by finding the first /data/ directory
         spath = dpath.split('/')
         try:
@@ -248,13 +249,15 @@ def report_processing(files, output, angle, deltas):
 
 def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True):
 
+    prefix = ''
     for delta in deltas:
         prefix = process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True)
 
     if not output:
         output = prefix
+        if output.endswith('/'):
+            output = output + 'out'
     report_processing(files, prefix, angle, deltas) 
-
 
 
 def _save_file(output, result, fourth=True):
