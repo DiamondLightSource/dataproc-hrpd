@@ -4,6 +4,18 @@ Command line interface for rebinner
 
 import mythen
 
+def process(args):
+    output = args.output
+    if args.mythen:
+        for file in args.files:
+            data, nfiles = mythen.parse_metadata_and_load(file)
+            if args.processed: output = mythen.preserve_filesystem(nfiles[0], output) # This wont work for files in different directories
+            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
+    else:
+        data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
+        if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
+        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
+
 def main(args=None):
     from argparse import ArgumentParser
     parser = ArgumentParser(usage= '%(prog)s [options] file1 file2 (or scan numbers)',
@@ -25,17 +37,7 @@ def main(args=None):
     args = parser.parse_args(args)
     if not args.delta: args.delta = [0.1] # default delta value
 
-    output = args.output
-    if args.mythen:
-        for file in args.files:
-            data, nfiles = mythen.parse_metadata_and_load(file)
-            if args.processed: output = mythen.preserve_filesystem(nfiles[0], output) # This wont work for files in different directories
-            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
-    else:
-        data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
-        if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
-        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
-
+    process(args)
 
 if __name__ == '__main__':
     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])

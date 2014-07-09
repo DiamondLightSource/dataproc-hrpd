@@ -255,9 +255,9 @@ def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, p
 
     if not output:
         output = prefix
-        if output.endswith('/'):
-            output = output + 'out'
-    report_processing(files, prefix, angle, deltas) 
+    if output.endswith('/'):
+        output = output + 'out'
+    report_processing(files, output, angle, deltas) 
 
 
 def _save_file(output, result, fourth=True):
