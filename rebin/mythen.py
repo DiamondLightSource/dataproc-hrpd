@@ -6,6 +6,9 @@ DEFAULT_BL_DIR = "/dls/i11/data"
 def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=("mac[-_][0-9]*.dat", "mythen[-_][0-9]*.dat")):
     return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
+def _round_remainder(x, d):
+    return (x + 0.5*d) // d
+
 def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
     '''
     mashed is list of tuples of 3 1-D arrays (angle, count, squared error)
@@ -20,8 +23,8 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
         if t > amax:
             amax = t
 
-    abeg = (max(0, amin - angle) // delta) * delta + angle
-    aend = (((amax - angle) // delta) + 1) * delta + angle
+    abeg = _round_remainder(max(0, amin - angle), delta) * delta + angle
+    aend = (_round_remainder(amax - angle, delta) + 1) * delta + angle
     from math import ceil
     alen = int(ceil((aend - abeg)/delta))
     result = np.zeros((4, alen), dtype=np.float)
@@ -48,7 +51,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
             e = e[min_index:]
 
         # need to linearly interpolate?
-        inds = np.floor((a - abeg + 0.5*delta) / delta).astype(np.int)
+        inds = _round_remainder(a - abeg, delta).astype(np.int)
         nlen = inds.ptp() + 1
         nbeg = inds.min()
         nresult = np.zeros((4, nlen), dtype=np.float)
