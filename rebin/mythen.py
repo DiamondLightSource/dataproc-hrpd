@@ -48,7 +48,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
             e = e[min_index:]
 
         # need to linearly interpolate?
-        inds = ((a - abeg) // delta).astype(np.int)
+        inds = np.floor((a - abeg + 0.5*delta) / delta).astype(np.int)
         nlen = inds.ptp() + 1
         nbeg = inds.min()
         nresult = np.zeros((4, nlen), dtype=np.float)
