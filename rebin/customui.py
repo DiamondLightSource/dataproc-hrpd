@@ -1,4 +1,8 @@
-from PySide import QtGui
+
+try:
+    from PyQt4 import QtGui
+except:
+    from PySide import QtGui
 
 class DropListView(QtGui.QListView):
     '''

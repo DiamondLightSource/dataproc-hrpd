@@ -1,8 +1,12 @@
 '''
 GUI for rebinner
 '''
-from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
-from PySide.QtCore import Qt
+try:
+    from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
+    from PyQt4.QtCore import Qt
+except:
+    from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
+    from PySide.QtCore import Qt
 
 from mythenui import Ui_mythen_gui
 

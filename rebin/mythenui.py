@@ -9,7 +9,10 @@
 
 from customui import DropListView
 
-from PySide import QtCore, QtGui
+try:
+    from PyQt4 import QtCore, QtGui
+except:
+    from PySide import QtCore, QtGui
 
 class Ui_mythen_gui(object):
     def setupUi(self, mythen_gui):

@@ -7,7 +7,10 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+try:
+    from PyQt4 import QtCore, QtGui
+except:
+    from PySide import QtCore, QtGui
 
 class Ui_range_dialog(object):
     def setupUi(self, range_dialog):
