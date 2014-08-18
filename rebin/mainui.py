@@ -2,6 +2,8 @@
 GUI for rebinner
 '''
 try:
+    import sip
+    sip.setapi('QString', 2)
     from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
     from PyQt4.QtCore import Qt
 except:
