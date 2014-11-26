@@ -10,17 +10,18 @@ def process(args):
         for file in args.files:
             data, nfiles = mythen.parse_metadata_and_load(file)
             if args.processed: output = mythen.preserve_filesystem(nfiles[0], output) # This wont work for files in different directories
-            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
+            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, ext=args.ext)
     else:
         data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
         if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
-        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output)
+        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, ext=args.ext)
 
 def main(args=None):
     from argparse import ArgumentParser
     parser = ArgumentParser(usage= '%(prog)s [options] file1 file2 (or scan numbers)',
                             description='This script will load, sum and rebin a set of PSD/MAC data files',
                             prefix_chars='-+')
+    parser.add_argument('-e', '--ext', action='store', dest='ext', default=None, help='File extension to use for saving')
     parser.add_argument('-a', '--angle', action='store', type=float, dest='angle', default=0., 
             help='Specify 2theta angle for a bin edge, in degrees')
     parser.add_argument('-d', '--delta', action='append', type=float, dest='delta', default=None, help='Specify 2theta bin size, in degrees')
@@ -40,4 +41,5 @@ def main(args=None):
     process(args)
 
 if __name__ == '__main__':
-    main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])
+#     main(['-v', 'cm2060-1', '-y', '2011', '-a', '0', '-d', '0.05', '78348'])
+    main(['-v', 'cm4962-3', '-y', '2014', '-a', '0', '-d', '0.004', '-r', '320466'])

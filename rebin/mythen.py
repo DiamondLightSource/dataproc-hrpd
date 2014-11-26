@@ -171,13 +171,14 @@ def preserve_filesystem(dpath, output):
     return out
 
 
-def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True):
+def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True, ext=None):
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
 
     if output:
         out_dir, fname = path.split(output)
         i = fname.rfind(".")
-        ext = fname[i:] if i >= 0 else ''
+        if ext is None:
+            ext = fname[i:] if i >= 0 else ''
         prefix = path.join(out_dir, fname[:i]) if i >= 0 else output
     else:
         out_dir = ''
@@ -207,6 +208,8 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
                 e = None
             t += '_reb_' + sd # append delta
             if e: # append extension
+                if ext is not None:
+                    e = ext
                 t += e
             nfiles.append(path.join(out_dir, fbase + t))
 
@@ -222,7 +225,8 @@ def process_and_save(data, angle, delta, rebinned, summed, files, output, progre
                 prefix = fbase.pop()
             else:
                 prefix = '_'.join([path.splitext(path.split(f)[1])[0] for f in files])
-            ext =  path.splitext(files[0])[1] # Use the filename extension of the first file
+            if ext is None:
+                ext =  path.splitext(files[0])[1] # Use the filename extension of the first file
             prefix = path.join(out_dir, prefix)
 
         summed_out = prefix + '_summed_' + sd + ext
@@ -250,11 +254,11 @@ def report_processing(files, output, angle, deltas):
         p.close()
 
 
-def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True):
+def process_and_save_all(data, angle, deltas, rebinned, summed, files, output, progress=None, weights=True, ext=None):
 
     prefix = ''
     for delta in deltas:
-        prefix = process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True)
+        prefix = process_and_save(data, angle, delta, rebinned, summed, files, output, progress=progress, weights=weights, ext=ext)
 
     if not output:
         output = prefix
