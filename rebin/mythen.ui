@@ -321,7 +321,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen filename&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen directory and summarise in chosen filename&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string>Process

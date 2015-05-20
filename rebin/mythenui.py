@@ -132,7 +132,7 @@ class Ui_mythen_gui(object):
         self.rebin_rb.setText(QtGui.QApplication.translate("mythen_gui", "Rebin only", None, QtGui.QApplication.UnicodeUTF8))
         self.sum_rb.setText(QtGui.QApplication.translate("mythen_gui", "Sum only", None, QtGui.QApplication.UnicodeUTF8))
         self.both_rb.setText(QtGui.QApplication.translate("mythen_gui", "Both", None, QtGui.QApplication.UnicodeUTF8))
-        self.process.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen filename</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.process.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen directory and summarise in chosen filename</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.process.setText(QtGui.QApplication.translate("mythen_gui", "Process\n"
 "and\n"
 "save...", None, QtGui.QApplication.UnicodeUTF8))

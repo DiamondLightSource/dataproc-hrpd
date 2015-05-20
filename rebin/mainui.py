@@ -112,6 +112,9 @@ def getsavefilename(parent=None, caption='', basedir='', filters='',
 # TODO
 # add drop handling
 # 
+
+import os.path as path
+
 class MainWindow(QMainWindow, Ui_mythen_gui):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -159,7 +162,6 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         return year, visit
 
     def getBaseDirectory(self, processing=False, scans=None):
-        import os.path as path
         base = None
         if scans:
             base = path.dirname(scans[0])
@@ -216,8 +218,8 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
 
     def processScans(self):
         base = self.getBaseDirectory(True, self.scans)
-        out_file, _selectedfilter = getsavefilename(caption="Save rebinned scans",
-                                                                basedir=base)
+        out_file, _selectedfilter = getsavefilename(caption="Choose file for summary output - the directory is also used for rebinned and/or summed scans",
+                                                                basedir=path.join(base, 'summary.txt'))
 
         if not out_file:
             return
