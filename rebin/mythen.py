@@ -1,10 +1,10 @@
 import numpy as np
-from scisoftpy import io
+from dlsio import pyio # @UnresolvedImport
 
 DEFAULT_BL_DIR = "/dls/i11/data"
 
 def find_mythen_files(scan, visit=None, year=None, bl_dir=DEFAULT_BL_DIR, ending=("mac[-_][0-9]*.dat", "mythen[-_][0-9]*.dat")):
-    return io.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
+    return pyio.find_scan_files(scan, bl_dir, visit=visit, year=year, ending=ending)
 
 def _round_remainder(x, d):
     return (x + 0.5*d) // d
@@ -114,12 +114,12 @@ def load_all(files, visit, year, progress=None):
             if progress.wasCanceled():
                 break
         try:
-            d = io.load(f)
+            d = pyio.load(f)
             data.append(d)
             found.append(f)
         except:
             nfiles = find_mythen_files(int(f), visit=visit, year=year)
-            dl = [io.load(f) for f in nfiles]
+            dl = [pyio.load(f) for f in nfiles]
             data.extend(dl)
             found.extend(nfiles)
     return data, found
@@ -130,7 +130,7 @@ def parse_metadata(f):
     import re
     mythen_reg = r'^\d+[-_](mac|mythen)[-_]\d*\.dat$' # Unused
     dir, dat_file = path.split(f)
-    d = io.load(f)
+    d = pyio.load(f)
     mythen_files = []
     for k in d.keys():
         if k is not 'metadata':
