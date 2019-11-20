@@ -8,7 +8,7 @@ except ImportError:
 
 setup(
     name = "hrpd_rebin",
-    version = "0.9",
+    version = "1.0",
     packages = find_packages(),
     install_requires = install_deps,
     entry_points = {'console_scripts': ['rebin = rebin.maincmd:main'],
