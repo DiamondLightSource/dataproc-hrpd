@@ -1,3 +1,4 @@
+import sys
 '''
 GUI for rebinner
 '''
@@ -7,8 +8,12 @@ try:
     from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
     from PyQt4.QtCore import Qt
 except:
-    from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
-    from PySide.QtCore import Qt
+    try:
+        from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
+        from PySide.QtCore import Qt
+    except:
+        print("Error: At least one of PySide>=1.2 or PyQt4>=4 is required.\nExiting")
+        sys.exit()
 
 from mythenui import Ui_mythen_gui
 
