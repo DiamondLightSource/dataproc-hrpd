@@ -2,3 +2,6 @@ This repository contains ScisoftPy scripts for processing high resolution powder
 diffraction (HRPD) data.
 
 They are aimed for use with I11's data files to sum and re-bin overlapping scans.
+
+Additional dependencies:
+One of PySide>=1.2 or PyQt4>=4 is required.
