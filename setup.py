@@ -13,7 +13,7 @@ setup(
     ],
     packages=find_packages(),
     install_requires=['numpy>=1.6', 'scisoftpy>=2.16'],
-    entry_points={'console_scripts': ['rebin = rebin.maincmd:main'],
-                    'gui_scripts': ['rebin-gui = rebin.mainui:main']},
+    entry_points={'console_scripts': ['rebin = hrpdrebin.maincmd:main'],
+                    'gui_scripts': ['rebin-gui = hrpdrebin.mainui:main']},
     url='https://github.com/DiamondLightSource/python-hrpd-rebin',
 )
