@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="hrpd_rebin",
+    name="hrpdrebin",
     version="1.0",
     description='High-resolution powder diffraction rebin',
     author="Peter Chang",
