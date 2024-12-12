@@ -1,7 +1,7 @@
-import sys
 '''
 GUI for rebinner
 '''
+import sys
 try:
     import sip
     sip.setapi('QString', 2)
@@ -20,7 +20,6 @@ from mythenui import Ui_mythen_gui
 from rangeui import Ui_range_dialog
 
 import mythen
-import sys
 
 # taken from spyderlib's qt/compat.py
 # --- start ---

@@ -5,7 +5,7 @@ Rebin all mac or mythen files in directories
 May need to adjust the regexs used for finding the files for your data
 
 This script essentially does the following 
-find <directory> -type f -maxdepth 1 | grep -E <regex> | xargs ./hrpdrebin -p -d 2 -d 3 -d 5 [-r] [+s] [-m]
+find <directory> -type f -maxdepth 1 | grep -E <regex> | xargs ./rebin -p -d 2 -d 3 -d 5 [-r] [+s] [-m]
 '''
 
 import os, re
