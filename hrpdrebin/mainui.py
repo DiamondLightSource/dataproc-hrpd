@@ -18,7 +18,7 @@ try:
         QErrorMessage,
     )
     from PyQt4.QtCore import Qt
-except:
+except ImportError:
     try:
         from PySide.QtGui import (
             QMainWindow,
@@ -30,9 +30,11 @@ except:
             QErrorMessage,
         )
         from PySide.QtCore import Qt
-    except:
+    except ImportError:
         print("Error: At least one of PySide>=1.2 or PyQt4>=4 is required.\nExiting")
         sys.exit()
+
+import os.path as path
 
 from mythenui import Ui_mythen_gui
 
@@ -43,6 +45,17 @@ import mythen
 
 # taken from spyderlib's qt/compat.py
 # --- start ---
+def to_text_string(obj, encoding=None):
+    """Convert `obj` to (unicode) text string"""
+    if isinstance(obj, str):
+        # In case this function is not used properly, this could happen
+        return obj
+
+    if encoding is None:
+        return str(obj)
+    return str(obj, encoding)
+
+
 def _qfiledialog_wrapper(
     attr,
     parent=None,
@@ -165,8 +178,6 @@ def getsavefilename(
 # TODO
 # add drop handling
 #
-
-import os.path as path
 
 
 class MainWindow(QMainWindow, Ui_mythen_gui):

@@ -1,6 +1,6 @@
 try:
     from PyQt4 import QtGui
-except:
+except ImportError:
     from PySide import QtGui
 
 

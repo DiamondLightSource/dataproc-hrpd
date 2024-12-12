@@ -11,7 +11,7 @@ from customui import DropListView
 
 try:
     from PyQt4 import QtCore, QtGui
-except:
+except ImportError:
     from PySide import QtCore, QtGui
 
 
