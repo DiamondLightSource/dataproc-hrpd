@@ -39,7 +39,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
     from math import ceil
 
     alen = int(ceil((aend - abeg) / delta))
-    result = np.zeros((4, alen), dtype=np.float)
+    result = np.zeros((4, alen), dtype=np.float64)
     result[0] = abeg + np.arange(alen) * delta
     cresult = result[1]
     eresult = result[2]
@@ -63,10 +63,14 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
             e = e[min_index:]
 
         # need to linearly interpolate?
-        inds = _round_remainder(a - abeg, delta).astype(np.int)
+        inds = _round_remainder(a - abeg, delta).astype(np.int32)
         nlen = inds.ptp() + 1
+        print("Index length", nlen)
+        assert nlen > 0, "Maybe there's more than about 2 billion bins"
         nbeg = inds.min()
-        nresult = np.zeros((4, nlen), dtype=np.float)
+        print("Index start", nbeg)
+        assert nbeg >= 0, "Starting index must be non-negative (maybe too many bins)"
+        nresult = np.zeros((4, nlen), dtype=np.float64)
         nresult[0] = abeg + (nbeg + np.arange(nlen)) * delta
         ncresult = nresult[1]
         neresult = nresult[2]

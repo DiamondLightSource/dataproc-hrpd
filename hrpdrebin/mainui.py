@@ -2,182 +2,23 @@
 GUI for rebinner
 """
 
-import sys
+from os import path
 
-try:
-    import sip
+from qtpy.QtWidgets import (
+    QMainWindow,
+    QApplication,
+    QFileDialog,
+    QDialog,
+    QProgressDialog,
+    QErrorMessage,
+)
+from qtpy.QtCore import Qt, QStringListModel
+from qtpy.compat import getopenfilenames, getsavefilename
+from .mythenui import Ui_mythen_gui
 
-    sip.setapi("QString", 2)
-    from PyQt4.QtGui import (
-        QMainWindow,
-        QApplication,
-        QFileDialog,
-        QStringListModel,
-        QDialog,
-        QProgressDialog,
-        QErrorMessage,
-    )
-    from PyQt4.QtCore import Qt
-except ImportError:
-    try:
-        from PySide.QtGui import (
-            QMainWindow,
-            QApplication,
-            QFileDialog,
-            QStringListModel,
-            QDialog,
-            QProgressDialog,
-            QErrorMessage,
-        )
-        from PySide.QtCore import Qt
-    except ImportError:
-        print("Error: At least one of PySide>=1.2 or PyQt4>=4 is required.\nExiting")
-        sys.exit()
+from .rangeui import Ui_range_dialog
 
-import os.path as path
-
-from mythenui import Ui_mythen_gui
-
-from rangeui import Ui_range_dialog
-
-import mythen
-
-
-# taken from spyderlib's qt/compat.py
-# --- start ---
-def to_text_string(obj, encoding=None):
-    """Convert `obj` to (unicode) text string"""
-    if isinstance(obj, str):
-        # In case this function is not used properly, this could happen
-        return obj
-
-    if encoding is None:
-        return str(obj)
-    return str(obj, encoding)
-
-
-def _qfiledialog_wrapper(
-    attr,
-    parent=None,
-    caption="",
-    basedir="",
-    filters="",
-    selectedfilter="",
-    options=None,
-):
-    if options is None:
-        options = QFileDialog.Options(0)
-    # PySide or PyQt >=v4.6
-    QString = None  # analysis:ignore
-    tuple_returned = True
-    try:
-        # PyQt >=v4.6
-        func = getattr(QFileDialog, attr + "AndFilter")
-    except AttributeError:
-        # PySide or PyQt <v4.6
-        func = getattr(QFileDialog, attr)
-        if QString is not None:
-            selectedfilter = QString()
-            tuple_returned = False
-
-    # Calling QFileDialog static method
-    if sys.platform == "win32":
-        # On Windows platforms: redirect standard outputs
-        _temp1, _temp2 = sys.stdout, sys.stderr
-        sys.stdout, sys.stderr = None, None
-    try:
-        result = func(parent, caption, basedir, filters, selectedfilter, options)
-    except TypeError:
-        # The selectedfilter option (`initialFilter` in Qt) has only been
-        # introduced in Jan. 2010 for PyQt v4.7, that's why we handle here
-        # the TypeError exception which will be raised with PyQt v4.6
-        # (see Issue 960 for more details)
-        result = func(parent, caption, basedir, filters, options)
-    finally:
-        if sys.platform == "win32":
-            # On Windows platforms: restore standard outputs
-            sys.stdout, sys.stderr = _temp1, _temp2
-
-    # Processing output
-    if tuple_returned:
-        # PySide or PyQt >=v4.6
-        output, selectedfilter = result
-    else:
-        # PyQt <v4.6 (API #1)
-        output = result
-    if QString is not None:
-        # PyQt API #1: conversions needed from QString/QStringList
-        selectedfilter = to_text_string(selectedfilter)
-        if isinstance(output, QString):
-            # Single filename
-            output = to_text_string(output)
-        else:
-            # List of filenames
-            output = [to_text_string(fname) for fname in output]
-
-    # Always returns the tuple (output, selectedfilter)
-    return output, selectedfilter
-
-
-def getopenfilename(
-    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
-):
-    """Wrapper around QtGui.QFileDialog.getOpenFileName static method
-    Returns a tuple (filename, selectedfilter) -- when dialog box is canceled,
-    returns a tuple of empty strings
-    Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper(
-        "getOpenFileName",
-        parent=parent,
-        caption=caption,
-        basedir=basedir,
-        filters=filters,
-        selectedfilter=selectedfilter,
-        options=options,
-    )
-
-
-def getopenfilenames(
-    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
-):
-    """Wrapper around QtGui.QFileDialog.getOpenFileNames static method
-    Returns a tuple (filenames, selectedfilter) -- when dialog box is canceled,
-    returns a tuple (empty list, empty string)
-    Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper(
-        "getOpenFileNames",
-        parent=parent,
-        caption=caption,
-        basedir=basedir,
-        filters=filters,
-        selectedfilter=selectedfilter,
-        options=options,
-    )
-
-
-def getsavefilename(
-    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
-):
-    """Wrapper around QtGui.QFileDialog.getSaveFileName static method
-    Returns a tuple (filename, selectedfilter) -- when dialog box is canceled,
-    returns a tuple of empty strings
-    Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper(
-        "getSaveFileName",
-        parent=parent,
-        caption=caption,
-        basedir=basedir,
-        filters=filters,
-        selectedfilter=selectedfilter,
-        options=options,
-    )
-
-
-# --- end ---
-
-# TODO
-# add drop handling
-#
+from . import mythen
 
 
 class MainWindow(QMainWindow, Ui_mythen_gui):
@@ -308,7 +149,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         progress.setWindowModality(Qt.WindowModal)
         progress.forceShow()
         progress.setValue(0)
-        from mythen import load_all, process_and_save, report_processing
+        from .mythen import load_all, process_and_save, report_processing
 
         data, files = load_all(self.scans, None, None, progress=progress)
         summed = True

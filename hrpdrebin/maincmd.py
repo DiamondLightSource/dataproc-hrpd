@@ -2,7 +2,7 @@
 Command line interface for rebinner
 """
 
-import mythen
+from . import mythen
 
 
 def process(args):

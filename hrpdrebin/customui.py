@@ -1,10 +1,7 @@
-try:
-    from PyQt4 import QtGui
-except ImportError:
-    from PySide import QtGui
+from qtpy.QtWidgets import QListView
 
 
-class DropListView(QtGui.QListView):
+class DropListView(QListView):
     """ """
 
     def dragEnterEvent(self, event):
@@ -22,7 +19,3 @@ class DropListView(QtGui.QListView):
             event.acceptProposedAction()
             files = [u.toLocalFile() for u in m.urls()]
             print(files)
-
-
-#             self.g
-#         print(data)
