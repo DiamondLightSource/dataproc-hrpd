@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="hrpdrebin",
     version="1.1",
-    description='High-resolution powder diffraction rebin',
+    description="High-resolution powder diffraction rebin",
     author="Peter Chang",
     author_email="dataanalysis@diamond.ac.uk",
     classifiers=[
@@ -12,8 +12,10 @@ setup(
         "Programming Language :: Python :: 2.7",
     ],
     packages=find_packages(),
-    install_requires=['numpy>=1.6,<2', 'scisoftpy>=2.17'],
-    entry_points={'console_scripts': ['rebin = hrpdrebin.maincmd:main'],
-                    'gui_scripts': ['rebin-gui = hrpdrebin.mainui:main']},
-    url='https://github.com/DiamondLightSource/python-hrpd-rebin',
+    install_requires=["numpy>=1.6,<2", "scisoftpy>=2.17"],
+    entry_points={
+        "console_scripts": ["rebin = hrpdrebin.maincmd:main"],
+        "gui_scripts": ["rebin-gui = hrpdrebin.mainui:main"],
+    },
+    url="https://github.com/DiamondLightSource/python-hrpd-rebin",
 )

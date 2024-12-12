@@ -1,5 +1,1 @@
 import maincmd, mythen
-
-
-
-

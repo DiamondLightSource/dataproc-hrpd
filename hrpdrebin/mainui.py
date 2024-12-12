@@ -1,15 +1,34 @@
-'''
+"""
 GUI for rebinner
-'''
+"""
+
 import sys
+
 try:
     import sip
-    sip.setapi('QString', 2)
-    from PyQt4.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
+
+    sip.setapi("QString", 2)
+    from PyQt4.QtGui import (
+        QMainWindow,
+        QApplication,
+        QFileDialog,
+        QStringListModel,
+        QDialog,
+        QProgressDialog,
+        QErrorMessage,
+    )
     from PyQt4.QtCore import Qt
 except:
     try:
-        from PySide.QtGui import QMainWindow, QApplication, QFileDialog, QStringListModel, QDialog, QProgressDialog, QErrorMessage
+        from PySide.QtGui import (
+            QMainWindow,
+            QApplication,
+            QFileDialog,
+            QStringListModel,
+            QDialog,
+            QProgressDialog,
+            QErrorMessage,
+        )
         from PySide.QtCore import Qt
     except:
         print("Error: At least one of PySide>=1.2 or PyQt4>=4 is required.\nExiting")
@@ -21,10 +40,18 @@ from rangeui import Ui_range_dialog
 
 import mythen
 
+
 # taken from spyderlib's qt/compat.py
 # --- start ---
-def _qfiledialog_wrapper(attr, parent=None, caption='', basedir='',
-                         filters='', selectedfilter='', options=None):
+def _qfiledialog_wrapper(
+    attr,
+    parent=None,
+    caption="",
+    basedir="",
+    filters="",
+    selectedfilter="",
+    options=None,
+):
     if options is None:
         options = QFileDialog.Options(0)
     # PySide or PyQt >=v4.6
@@ -32,7 +59,7 @@ def _qfiledialog_wrapper(attr, parent=None, caption='', basedir='',
     tuple_returned = True
     try:
         # PyQt >=v4.6
-        func = getattr(QFileDialog, attr+'AndFilter')
+        func = getattr(QFileDialog, attr + "AndFilter")
     except AttributeError:
         # PySide or PyQt <v4.6
         func = getattr(QFileDialog, attr)
@@ -46,8 +73,7 @@ def _qfiledialog_wrapper(attr, parent=None, caption='', basedir='',
         _temp1, _temp2 = sys.stdout, sys.stderr
         sys.stdout, sys.stderr = None, None
     try:
-        result = func(parent, caption, basedir,
-                      filters, selectedfilter, options)
+        result = func(parent, caption, basedir, filters, selectedfilter, options)
     except TypeError:
         # The selectedfilter option (`initialFilter` in Qt) has only been
         # introduced in Jan. 2010 for PyQt v4.7, that's why we handle here
@@ -79,45 +105,69 @@ def _qfiledialog_wrapper(attr, parent=None, caption='', basedir='',
     # Always returns the tuple (output, selectedfilter)
     return output, selectedfilter
 
-def getopenfilename(parent=None, caption='', basedir='', filters='',
-                    selectedfilter='', options=None):
+
+def getopenfilename(
+    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
+):
     """Wrapper around QtGui.QFileDialog.getOpenFileName static method
     Returns a tuple (filename, selectedfilter) -- when dialog box is canceled,
     returns a tuple of empty strings
     Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper('getOpenFileName', parent=parent,
-                                caption=caption, basedir=basedir,
-                                filters=filters, selectedfilter=selectedfilter,
-                                options=options)
+    return _qfiledialog_wrapper(
+        "getOpenFileName",
+        parent=parent,
+        caption=caption,
+        basedir=basedir,
+        filters=filters,
+        selectedfilter=selectedfilter,
+        options=options,
+    )
 
-def getopenfilenames(parent=None, caption='', basedir='', filters='',
-                     selectedfilter='', options=None):
+
+def getopenfilenames(
+    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
+):
     """Wrapper around QtGui.QFileDialog.getOpenFileNames static method
     Returns a tuple (filenames, selectedfilter) -- when dialog box is canceled,
     returns a tuple (empty list, empty string)
     Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper('getOpenFileNames', parent=parent,
-                                caption=caption, basedir=basedir,
-                                filters=filters, selectedfilter=selectedfilter,
-                                options=options)
+    return _qfiledialog_wrapper(
+        "getOpenFileNames",
+        parent=parent,
+        caption=caption,
+        basedir=basedir,
+        filters=filters,
+        selectedfilter=selectedfilter,
+        options=options,
+    )
 
-def getsavefilename(parent=None, caption='', basedir='', filters='',
-                    selectedfilter='', options=None):
+
+def getsavefilename(
+    parent=None, caption="", basedir="", filters="", selectedfilter="", options=None
+):
     """Wrapper around QtGui.QFileDialog.getSaveFileName static method
     Returns a tuple (filename, selectedfilter) -- when dialog box is canceled,
     returns a tuple of empty strings
     Compatible with PyQt >=v4.4 (API #1 and #2) and PySide >=v1.0"""
-    return _qfiledialog_wrapper('getSaveFileName', parent=parent,
-                                caption=caption, basedir=basedir,
-                                filters=filters, selectedfilter=selectedfilter,
-                                options=options)
+    return _qfiledialog_wrapper(
+        "getSaveFileName",
+        parent=parent,
+        caption=caption,
+        basedir=basedir,
+        filters=filters,
+        selectedfilter=selectedfilter,
+        options=options,
+    )
+
+
 # --- end ---
 
 # TODO
 # add drop handling
-# 
+#
 
 import os.path as path
+
 
 class MainWindow(QMainWindow, Ui_mythen_gui):
     def __init__(self, parent=None):
@@ -134,6 +184,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
 
         # add years to combo
         from time import localtime
+
         tm = localtime()
         for i in range(tm.tm_year, 2006, -1):
             self.year_combo.addItem(str(i))
@@ -145,22 +196,28 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
 
     def addScanFiles(self):
         base = self.getBaseDirectory(False)
-        files, _selectedfilter = getopenfilenames(caption="Select scan files",
-                                                              filters="Data files(*.dat)",
-                                                              basedir=base,
-                                                              options=QFileDialog.ReadOnly)
-        files = [ f for f in files if f not in self.scans ]
+        files, _selectedfilter = getopenfilenames(
+            caption="Select scan files",
+            filters="Data files(*.dat)",
+            basedir=base,
+            options=QFileDialog.ReadOnly,
+        )
+        files = [f for f in files if f not in self.scans]
         self.scans.extend(files)
         self.scans_model.setStringList(self.scans)
 
     def deleteFiles(self):
-        rows = sorted([ i.row() for i in self.scans_view.selectedIndexes() ])
+        rows = sorted([i.row() for i in self.scans_view.selectedIndexes()])
         for r in reversed(rows):
             del self.scans[r]
         self.scans_model.setStringList(self.scans)
 
     def getYearAndVisit(self):
-        year = None if self.year_combo.currentIndex() == 0 else self.year_combo.currentText()
+        year = (
+            None
+            if self.year_combo.currentIndex() == 0
+            else self.year_combo.currentText()
+        )
         vtext = self.visit_edit.toPlainText()
         visit = vtext if vtext else None
         return year, visit
@@ -170,7 +227,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         if scans:
             base = path.dirname(scans[0])
             if processing:
-                base = path.join(base, 'processing')
+                base = path.join(base, "processing")
             if not path.exists(base):
                 base = None
 
@@ -181,7 +238,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                 base = path.join(base, year)
                 if visit is not None:
                     if processing:
-                        base = path.join(base, visit, 'processing')
+                        base = path.join(base, visit, "processing")
                     else:
                         base = path.join(base, visit)
         return base
@@ -194,7 +251,9 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                 not_found = []
                 numbers = mythen.parse_range_list(text)
                 year, visit = self.getYearAndVisit()
-                progress = QProgressDialog("Locating scan files from numbers...", "Stop", 0, len(numbers), self)
+                progress = QProgressDialog(
+                    "Locating scan files from numbers...", "Stop", 0, len(numbers), self
+                )
                 progress.setWindowModality(Qt.WindowModal)
                 progress.forceShow()
                 progress.setValue(0)
@@ -202,10 +261,12 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                     progress.setValue(progress.value() + 1)
                     if progress.wasCanceled():
                         break
-                    
-                    files = mythen.find_mythen_files(n, visit=visit, year=year) # FIXME needs to be in separate thread(!)
+
+                    files = mythen.find_mythen_files(
+                        n, visit=visit, year=year
+                    )  # FIXME needs to be in separate thread(!)
                     if files:
-                        files = [ f for f in files if f not in self.scans ]
+                        files = [f for f in files if f not in self.scans]
                         self.scans.extend(files)
                         self.scans_model.setStringList(self.scans)
                     else:
@@ -222,17 +283,22 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
 
     def processScans(self):
         base = self.getBaseDirectory(True, self.scans)
-        out_file, _selectedfilter = getsavefilename(caption="Choose file for summary output - the directory is also used for rebinned and/or summed scans",
-                                                                basedir=path.join(base, 'summary.txt'))
+        out_file, _selectedfilter = getsavefilename(
+            caption="Choose file for summary output - the directory is also used for rebinned and/or summed scans",
+            basedir=path.join(base, "summary.txt"),
+        )
 
         if not out_file:
             return
 
-        progress = QProgressDialog("Process scans...", "Stop", 0, 2*len(self.scans), self)
+        progress = QProgressDialog(
+            "Process scans...", "Stop", 0, 2 * len(self.scans), self
+        )
         progress.setWindowModality(Qt.WindowModal)
         progress.forceShow()
         progress.setValue(0)
         from mythen import load_all, process_and_save, report_processing
+
         data, files = load_all(self.scans, None, None, progress=progress)
         summed = True
         rebinned = True
@@ -241,9 +307,21 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         elif self.sum_rb.isChecked():
             rebinned = False
 
-        process_and_save(data, self.angle_spinbox.value(), self.delta_spinbox.value(),
-                rebinned, summed, files, out_file, progress=progress, weights=self.weight_cb.isChecked(), ext='.xye')
-        report_processing(files, out_file, self.angle_spinbox.value(), [self.delta_spinbox.value()])
+        process_and_save(
+            data,
+            self.angle_spinbox.value(),
+            self.delta_spinbox.value(),
+            rebinned,
+            summed,
+            files,
+            out_file,
+            progress=progress,
+            weights=self.weight_cb.isChecked(),
+            ext=".xye",
+        )
+        report_processing(
+            files, out_file, self.angle_spinbox.value(), [self.delta_spinbox.value()]
+        )
         progress.setValue(progress.maximum())
 
     def keyPressEvent(self, event):
@@ -251,9 +329,11 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         if k == Qt.Key_Delete or k == Qt.Key_Backspace:
             self.deleteFiles()
 
+
 def main(args=None):
     if args is None:
         import sys
+
         args = sys.argv
     app = QApplication(args)
     frame = MainWindow()

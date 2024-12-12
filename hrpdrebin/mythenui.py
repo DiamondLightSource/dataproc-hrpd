@@ -14,6 +14,7 @@ try:
 except:
     from PySide import QtCore, QtGui
 
+
 class Ui_mythen_gui(object):
     def setupUi(self, mythen_gui):
         mythen_gui.setObjectName("mythen_gui")
@@ -104,37 +105,184 @@ class Ui_mythen_gui(object):
         QtCore.QMetaObject.connectSlotsByName(mythen_gui)
 
     def retranslateUi(self, mythen_gui):
-        mythen_gui.setWindowTitle(QtGui.QApplication.translate("mythen_gui", "Mac/Mythen Rebinner", None, QtGui.QApplication.UnicodeUTF8))
-        self.parameter_group.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Count data is rebinned into larger angle bins specified by the leading edge value (start) and the width (size) in units of degrees</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.parameter_group.setTitle(QtGui.QApplication.translate("mythen_gui", "Bin angle parameters (degrees)", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("mythen_gui", "Start", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("mythen_gui", "Size", None, QtGui.QApplication.UnicodeUTF8))
-        self.dls_group.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Diamond Light Source specific information</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.dls_group.setTitle(QtGui.QApplication.translate("mythen_gui", "DLS info", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("mythen_gui", "Visit ID", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("mythen_gui", "Year", None, QtGui.QApplication.UnicodeUTF8))
-        self.visit_edit.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>A visit ID is a combination of two letters (village), four numbers (proposal) followed by a dash and a visit number in a year (eg. &quot;cm1234-2&quot;). Leave empty for all visits</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_scan_numbers.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Add to list of scan files using given scan numbers and visit information</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_scan_numbers.setText(QtGui.QApplication.translate("mythen_gui", "Add scans...", None, QtGui.QApplication.UnicodeUTF8))
-        self.year_combo.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Year of visit</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.year_combo.setItemText(0, QtGui.QApplication.translate("mythen_gui", "All years", None, QtGui.QApplication.UnicodeUTF8))
-        self.scan_group.setTitle(QtGui.QApplication.translate("mythen_gui", "Scan files", None, QtGui.QApplication.UnicodeUTF8))
-        self.scans_view.setToolTip(QtGui.QApplication.translate("mythen_gui", "List of scan files", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_scans.setToolTip(QtGui.QApplication.translate("mythen_gui", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans Serif\'; font-size:9pt;\">Add scan files to list from file selector</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_scans.setText(QtGui.QApplication.translate("mythen_gui", "Add files...", None, QtGui.QApplication.UnicodeUTF8))
-        self.delete_selection.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Delete selected files from list</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.delete_selection.setText(QtGui.QApplication.translate("mythen_gui", "Delete", None, QtGui.QApplication.UnicodeUTF8))
-        self.output_group.setTitle(QtGui.QApplication.translate("mythen_gui", "Output", None, QtGui.QApplication.UnicodeUTF8))
-        self.rebin_rb.setText(QtGui.QApplication.translate("mythen_gui", "Rebin only", None, QtGui.QApplication.UnicodeUTF8))
-        self.sum_rb.setText(QtGui.QApplication.translate("mythen_gui", "Sum only", None, QtGui.QApplication.UnicodeUTF8))
-        self.both_rb.setText(QtGui.QApplication.translate("mythen_gui", "Both", None, QtGui.QApplication.UnicodeUTF8))
-        self.process.setToolTip(QtGui.QApplication.translate("mythen_gui", "<html><head/><body><p>Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen directory and summarise in chosen filename</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.process.setText(QtGui.QApplication.translate("mythen_gui", "Process\n"
-"and\n"
-"save...", None, QtGui.QApplication.UnicodeUTF8))
-        self.weight_cb.setToolTip(QtGui.QApplication.translate("mythen_gui", "Include weight (number of bins used) as 4th column of output", None, QtGui.QApplication.UnicodeUTF8))
-        self.weight_cb.setText(QtGui.QApplication.translate("mythen_gui", "include weight", None, QtGui.QApplication.UnicodeUTF8))
+        mythen_gui.setWindowTitle(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "Mac/Mythen Rebinner",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.parameter_group.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Count data is rebinned into larger angle bins specified by the leading edge value (start) and the width (size) in units of degrees</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.parameter_group.setTitle(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "Bin angle parameters (degrees)",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.label.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Start", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.label_2.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Size", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.dls_group.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Diamond Light Source specific information</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.dls_group.setTitle(
+            QtGui.QApplication.translate(
+                "mythen_gui", "DLS info", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.label_3.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Visit ID", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.label_4.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Year", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.visit_edit.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>A visit ID is a combination of two letters (village), four numbers (proposal) followed by a dash and a visit number in a year (eg. &quot;cm1234-2&quot;). Leave empty for all visits</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.add_scan_numbers.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Add to list of scan files using given scan numbers and visit information</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.add_scan_numbers.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Add scans...", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.year_combo.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Year of visit</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.year_combo.setItemText(
+            0,
+            QtGui.QApplication.translate(
+                "mythen_gui", "All years", None, QtGui.QApplication.UnicodeUTF8
+            ),
+        )
+        self.scan_group.setTitle(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Scan files", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.scans_view.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui", "List of scan files", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.add_scans.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
+                '<html><head><meta name="qrichtext" content="1" /><style type="text/css">\n'
+                "p, li { white-space: pre-wrap; }\n"
+                "</style></head><body style=\" font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:\'Sans Serif\'; font-size:9pt;">Add scan files to list from file selector</span></p></body></html>',
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.add_scans.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Add files...", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.delete_selection.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Delete selected files from list</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.delete_selection.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Delete", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.output_group.setTitle(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Output", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.rebin_rb.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Rebin only", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.sum_rb.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Sum only", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.both_rb.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "Both", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
+        self.process.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "<html><head/><body><p>Rebin the count data from the given scan files according to the bin parameters set and save as indicted using chosen directory and summarise in chosen filename</p></body></html>",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.process.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "Process\n" "and\n" "save...",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.weight_cb.setToolTip(
+            QtGui.QApplication.translate(
+                "mythen_gui",
+                "Include weight (number of bins used) as 4th column of output",
+                None,
+                QtGui.QApplication.UnicodeUTF8,
+            )
+        )
+        self.weight_cb.setText(
+            QtGui.QApplication.translate(
+                "mythen_gui", "include weight", None, QtGui.QApplication.UnicodeUTF8
+            )
+        )
