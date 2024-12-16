@@ -172,6 +172,8 @@ def preserve_filesystem(dpath, output):
 
 
 def process_and_save(data, angle, delta, rebinned, summed, files, output, progress=None, weights=True, ext=None):
+    print('angle: {}, delta: {}, rebinned: {}, summed: {}, files: {}, output: {}, weights: {}, ext: {}'.format(
+        angle, delta, rebinned, summed, files, output, weights, ext))
     mashed = [ (d[0], d[1], np.square(d[2])) for d in data ]
 
     if output:

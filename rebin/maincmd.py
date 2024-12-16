@@ -10,11 +10,11 @@ def process(args):
         for file in args.files:
             data, nfiles = mythen.parse_metadata_and_load(file)
             if args.processed: output = mythen.preserve_filesystem(nfiles[0], output) # This wont work for files in different directories
-            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, ext=args.ext)
+            mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, weights=args.weights, ext=args.ext)
     else:
         data, nfiles = mythen.load_all(args.files, visit=args.visit, year=args.year)
         if args.processed: output = mythen.preserve_filesystem(nfiles[0], output)
-        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, ext=args.ext)
+        mythen.process_and_save_all(data, args.angle, args.delta, args.rebin, args.sum, nfiles, output, weights=args.weights, ext=args.ext)
 
 def main(args=None):
     from argparse import ArgumentParser
@@ -34,6 +34,7 @@ def main(args=None):
     parser.add_argument('-o', '--output', action='store', dest='output', default=None, help='Output file')
     parser.add_argument('-p', '--processed', action='store_true', dest='processed', default=None, help='Saves to "processed" directory')
     parser.add_argument('-m', '--mythen', action='store_true', dest='mythen', default=False, help='Searches a .dat file for mythen files to rebin')
+    parser.add_argument('-w', '--weights', action='store_true', dest='weights', default=False, help='Include weights column')
     parser.add_argument('files', nargs='+')
     args = parser.parse_args(args)
     if not args.delta: args.delta = [0.1] # default delta value
