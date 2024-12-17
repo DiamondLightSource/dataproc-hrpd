@@ -5,7 +5,6 @@ from scisoftpy import io
 
 DEFAULT_BL_DIR = "/dls/i11/data"
 
-
 def find_mythen_files(
     scan,
     visit=None,
@@ -52,7 +51,7 @@ def rebin(mashed, angle, delta, summed, files, progress=None, weights=True):
 
     for i, (a, c, e) in enumerate(mashed):
         if progress:
-            progress.setValue(progress.value() + 1)
+            progress.incValue()
             if progress.wasCanceled():
                 break
 
@@ -127,7 +126,7 @@ def load_all(files, visit, year, progress=None):
     found = []
     for f in files:
         if progress:
-            progress.setValue(progress.value() + 1)
+            progress.incValue()
             if progress.wasCanceled():
                 break
         try:

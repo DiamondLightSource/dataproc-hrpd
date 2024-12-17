@@ -9,15 +9,14 @@ from qtpy.QtWidgets import (
     QApplication,
     QFileDialog,
     QDialog,
-    QProgressDialog,
     QErrorMessage,
 )
 from qtpy.QtCore import Qt, QStringListModel
 from qtpy.compat import getopenfilenames, getsavefilename
+
+from .customui import ProgressDialog
 from .mythenui import Ui_mythen_gui
-
 from .rangeui import Ui_range_dialog
-
 from . import mythen
 
 
@@ -29,6 +28,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         self.delete_selection.clicked.connect(self.deleteFiles)
         self.add_scan_numbers.clicked.connect(self.addScanNumbers)
         self.process.clicked.connect(self.processScans)
+        self.process.setEnabled(False)
         self.scans = []
         self.scans_model = QStringListModel(self.scans, self.scans_view)
         self.scans_view.setModel(self.scans_model)
@@ -57,12 +57,14 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         files = [f for f in files if f not in self.scans]
         self.scans.extend(files)
         self.scans_model.setStringList(self.scans)
+        self.process.setEnabled(len(self.scans) > 0)
 
     def deleteFiles(self):
         rows = sorted([i.row() for i in self.scans_view.selectedIndexes()])
         for r in reversed(rows):
             del self.scans[r]
         self.scans_model.setStringList(self.scans)
+        self.process.setEnabled(len(self.scans) > 0)
 
     def getYearAndVisit(self):
         year = (
@@ -103,14 +105,14 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                 not_found = []
                 numbers = mythen.parse_range_list(text)
                 year, visit = self.getYearAndVisit()
-                progress = QProgressDialog(
+                progress = ProgressDialog(
                     "Locating scan files from numbers...", "Stop", 0, len(numbers), self
                 )
                 progress.setWindowModality(Qt.WindowModal)
                 progress.forceShow()
                 progress.setValue(0)
                 for n in numbers:
-                    progress.setValue(progress.value() + 1)
+                    progress.incValue()
                     if progress.wasCanceled():
                         break
 
@@ -125,6 +127,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
                         not_found.append(n)
 
                 progress.setValue(progress.maximum())
+                self.process.setEnabled(len(self.scans) > 0)
 
                 if not_found:
                     error = QErrorMessage(self)
@@ -143,15 +146,13 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         if not out_file:
             return
 
-        progress = QProgressDialog(
+        progress = ProgressDialog(
             "Process scans...", "Stop", 0, 2 * len(self.scans), self
         )
         progress.setWindowModality(Qt.WindowModal)
         progress.forceShow()
-        progress.setValue(0)
-        from .mythen import load_all, process_and_save, report_processing
 
-        data, files = load_all(self.scans, None, None, progress=progress)
+        data, files = mythen.load_all(self.scans, None, None, progress=progress)
         summed = True
         rebinned = True
         if self.rebin_rb.isChecked():
@@ -159,7 +160,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
         elif self.sum_rb.isChecked():
             rebinned = False
 
-        process_and_save(
+        mythen.process_and_save(
             data,
             self.angle_spinbox.value(),
             self.delta_spinbox.value(),
@@ -171,7 +172,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
             weights=self.weight_cb.isChecked(),
             ext=".xye",
         )
-        report_processing(
+        mythen.report_processing(
             files, out_file, self.angle_spinbox.value(), [self.delta_spinbox.value()]
         )
         progress.setValue(progress.maximum())
