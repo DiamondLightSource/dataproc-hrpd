@@ -16,9 +16,9 @@ import argparse
 # List of delta values to rebin to
 DELTAS = [2, 3, 5]
 # Regex finds mac data filenames 
-mac_reg = 'mac.*\.dat'
+mac_reg = re.compile(r'mac.*\.dat')
 # Regex finds files of the form <number>.dat
-scan_reg = '(\/|^)\d{6,}.dat'
+scan_reg = re.compile(r'(\/|^)\d{6,}.dat')
 
 def run_rebin(files, angle=0., delta=[0.1], rebin=True, sum=False, mythen=None):
     args = argparse.Namespace()
@@ -33,7 +33,7 @@ def run_rebin(files, angle=0., delta=[0.1], rebin=True, sum=False, mythen=None):
     maincmd.process(args)
 
 def _re_find(reg, files):
-    return [f for f in files if re.search(reg, f)]
+    return [f for f in files if reg.search(f)]
 def mac_find(files): return _re_find(mac_reg, files)
 def mythen_find(files): return _re_find(scan_reg, files)
 
