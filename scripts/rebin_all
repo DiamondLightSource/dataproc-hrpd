@@ -42,7 +42,8 @@ def _listdir(dir):
 
 def main(args=None):
     parser = argparse.ArgumentParser(usage= '%(prog)s -mac|-mythen [-r] directory',
-                            description= 'Process all mac or mythen files in a directory or several')
+                            description= 'Process all mac or mythen files in a directory or several',
+                            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-r', action='store_true', default=False, dest='recursive', help='Look through subdirectories for files to process')
     parser.add_argument('-mac', action='store_true', default=False, help='Look for mac data to process')
     parser.add_argument('-mythen', action='store_true', default=False, help='Look for mythen data to process')

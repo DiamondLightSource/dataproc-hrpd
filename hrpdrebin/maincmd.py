@@ -2,6 +2,8 @@
 Command line interface for rebinner
 """
 
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+
 from . import mythen
 
 
@@ -43,12 +45,11 @@ def process(args):
 
 
 def main(args=None):
-    from argparse import ArgumentParser
-
     parser = ArgumentParser(
         usage="%(prog)s [options] file1 file2 (or scan numbers)",
         description="This script will load, sum and rebin a set of PSD/MAC data files",
         prefix_chars="-+",
+        formatter_class=ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
         "-e",
