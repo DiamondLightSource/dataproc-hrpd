@@ -2,7 +2,7 @@
 GUI for rebinner
 """
 
-from os import path
+from os import path, environ
 
 from qtpy.QtWidgets import (
     QMainWindow,
@@ -184,6 +184,7 @@ class MainWindow(QMainWindow, Ui_mythen_gui):
 
 
 def main(args=None):
+    del environ["SESSION_MANAGER"] # avoids Session management error
     if args is None:
         import sys
 
