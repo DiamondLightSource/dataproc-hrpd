@@ -20,11 +20,12 @@ class DropListView(QListView):
             files = [u.toLocalFile() for u in m.urls()]
             print(files)
 
+
 class ProgressDialog(QProgressDialog):
     """ """
+
     def __init__(self, labelText, cancelButtonText, minimum, maximum, parent=None):
         super().__init__(labelText, cancelButtonText, minimum, maximum, parent=parent)
-
 
     def incValue(self):
         QApplication.processEvents()

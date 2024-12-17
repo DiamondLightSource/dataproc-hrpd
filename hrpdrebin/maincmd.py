@@ -49,7 +49,7 @@ def main(args=None):
         usage="%(prog)s [options] file1 file2 (or scan numbers)",
         description="This script will load, sum and rebin a set of PSD/MAC data files",
         prefix_chars="-+",
-        formatter_class=ArgumentDefaultsHelpFormatter
+        formatter_class=ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "-e",

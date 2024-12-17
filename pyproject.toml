@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hrpdrebin"
+version = "1.2"
+description = "High-resolution powder diffraction rebin"
+readme = "README"
+license = { file = "LICENSE" }
+authors = [
+    {name = "Peter Chang"}
+]
+maintainers = [
+    {name = "Data Analysis group", email = "dataanalysis@diamond.ac.uk"}
+]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+dependencies = [
+    "numpy>=1.6,<2",
+    "scisoftpy>=2.17",
+    "qtpy"
+]
+
+[project.optional-dependencies]
+pyqt = [
+    "pyqt"
+]
+pyside = [
+    "pyside2"
+]
+pyqt6 = [
+    "pyqt6"
+]
+pyside6 = [
+    "pyside6"
+]
+
+[project.urls]
+repository = "https://github.com/DiamondLightSource/python-hrpd-rebin"
+
+[project.scripts]
+rebin = "hrpdrebin.maincmd:main"
+rebin_all = "hrpdrebin.mainallcmd:main"
+
+[project.gui-scripts]
+"rebin-gui" = "hrpdrebin.mainui:main"
+
+[tool.setuptools.packages.find]
+include = ["hrpdrebin"]
+namespaces = false

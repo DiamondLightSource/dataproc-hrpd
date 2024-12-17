@@ -5,6 +5,7 @@ from scisoftpy import io
 
 DEFAULT_BL_DIR = "/dls/i11/data"
 
+
 def find_mythen_files(
     scan,
     visit=None,
